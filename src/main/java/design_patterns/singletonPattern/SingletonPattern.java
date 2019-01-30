@@ -1,4 +1,4 @@
-package design_patterns;
+package design_patterns.singletonPattern;
 
 /**
  * 单例模式：一个类只有唯一的实例，在创建日志类实例，数据库连接实例等会使用到。
