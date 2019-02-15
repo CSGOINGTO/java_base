@@ -5,7 +5,9 @@ package design_patterns;
  * 分为三种：饿汉模式、懒汉模式、双重测锁机制的单例模式
  */
 public class SingletonPattern {
-    // 饿汉模式：实例在类加载的时候初始化
+    /**
+     * 饿汉模式：实例在类加载的时候初始化
+     */
     private static SingletonPattern singletonPattern = new SingletonPattern();
     private SingletonPattern(){}
     public static SingletonPattern getSingletonPattern() {
@@ -17,7 +19,9 @@ public class SingletonPattern {
  * 懒汉模式
  */
 class SingletonPattern1{
-    // 只有在使用这个实例的时候才会初始化
+    /*
+     * 只有在使用这个实例的时候才会初始化
+     */
     private static SingletonPattern1 singletonPattern1 = null;
     private SingletonPattern1(){}
     public static SingletonPattern1 getSingletonPattern1() {
