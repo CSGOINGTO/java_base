@@ -1,4 +1,4 @@
-package leetcode.maxSubArry_53;
+package leetcode.array.easy.maxSubArry_53;
 
 public class Solution {
 

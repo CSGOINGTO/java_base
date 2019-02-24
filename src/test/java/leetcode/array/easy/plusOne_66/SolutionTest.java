@@ -1,4 +1,4 @@
-package leetcode.plusOne_66;
+package leetcode.array.easy.plusOne_66;
 
 import org.junit.Test;
 

@@ -1,4 +1,4 @@
-package leetcode.generate_118;
+package leetcode.array.easy.generate_118;
 
 import java.util.ArrayList;
 import java.util.List;

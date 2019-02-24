@@ -1,4 +1,4 @@
-package leetcode.merge_88;
+package leetcode.array.easy.merge_88;
 
 public class Solution {
     public static void merge(int[] nums1, int m, int[] nums2, int n) {

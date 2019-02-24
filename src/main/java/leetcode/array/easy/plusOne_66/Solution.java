@@ -1,4 +1,4 @@
-package leetcode.plusOne_66;
+package leetcode.array.easy.plusOne_66;
 
 public class Solution {
     public int[] plusOne(int[] digits) {

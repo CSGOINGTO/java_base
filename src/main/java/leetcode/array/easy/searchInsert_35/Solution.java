@@ -1,4 +1,4 @@
-package leetcode.searchInsert_35;
+package leetcode.array.easy.searchInsert_35;
 
 public class Solution {
     /**
