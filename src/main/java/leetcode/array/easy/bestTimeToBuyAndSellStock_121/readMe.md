@@ -12,4 +12,5 @@
 假设给定的数组为：[7, 1, 5, 3, 6, 4]
 如果我们在图标中绘制给定数组中的数字，我们会得到：
 ![](https://leetcode-cn.com/media/original_images/121/121_profit_graph.png)
+
 我们需要找到最小的谷之后的最大的峰，我们维持两个变量，minPrices和maxProfit，它们即是最小的买入价格和最大的利润（卖出的价格与最小的买入价格之间的最大差值）。
