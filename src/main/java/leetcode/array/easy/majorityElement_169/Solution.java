@@ -1,4 +1,4 @@
-package leetcode.array.easy.majorityElement;
+package leetcode.array.easy.majorityElement_169;
 
 import java.util.HashMap;
 import java.util.Map;
