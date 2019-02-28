@@ -1,6 +1,9 @@
 package leetcode.array.easy.plusOne_66;
 
+import com.google.common.collect.Lists;
 import org.junit.Test;
+
+import java.util.List;
 
 public class SolutionTest {
 
@@ -22,6 +25,14 @@ public class SolutionTest {
         // 复制src中下标为3,4,5的元素到desc数组中
         System.arraycopy(src, 2, desc, 0, desc.length);
         for (int num : desc) {
+            System.out.println(num);
+        }
+    }
+
+    @Test
+    public void testArrayRemove() {
+        List<Integer> list = Lists.newArrayList();
+        for (Integer num : list) {
             System.out.println(num);
         }
     }
