@@ -8,6 +8,7 @@ public class Solution {
         ListNode res = null;
         while(head != null) {
             ListNode temp = head;
+            // 备份原链表信息
             head = head.next;
             temp.next = res;
             res = temp;
