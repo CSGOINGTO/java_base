@@ -49,8 +49,6 @@ public class Solution {
 
     /**
      * 方法二：DFS栈
-     * @param left
-     * @param right
      * @return
      */
     public static boolean isSymmetric1(TreeNode root) {
