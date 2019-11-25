@@ -8,24 +8,10 @@ import java.util.Queue;
 
 public class Solution {
 
-    public static void main(String[] args) {
-        TreeNode p = new TreeNode(1);
-        TreeNode q = new TreeNode(1);
-        TreeNode q1 = new TreeNode(2);
-        TreeNode q2 = new TreeNode(3);
-        TreeNode p1 = new TreeNode(2);
-        TreeNode p2 = new TreeNode(3);
-        q.left = q1;
-        q.right = q2;
-        p.left = p1;
-        p.right = p2;
-//        boolean sameTree = Solution.isSameTree(p, q);
-//        System.out.println(sameTree);
-        boolean sameTree1 = Solution.isSameTree1(p, q);
-        System.out.println(sameTree1);
-    }
-
-    public static boolean isSameTree1(TreeNode p, TreeNode q) {
+    /**
+     * 方法一：采用层次遍历的方式
+     */
+    public boolean isSameTree1(TreeNode p, TreeNode q) {
         if (p == null && q == null) {
             return true;
         }
@@ -54,7 +40,10 @@ public class Solution {
         return true;
     }
 
-    public static boolean isSameTree(TreeNode p, TreeNode q) {
+    /**
+     * 方法二：采用递归的方法
+     */
+    public boolean isSameTree(TreeNode p, TreeNode q) {
         if(p == null && q == null) {
             return true;
         }
