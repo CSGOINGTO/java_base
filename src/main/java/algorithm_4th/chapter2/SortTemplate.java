@@ -1,5 +1,8 @@
 package algorithm_4th.chapter2;
 
+import algorithm_4th.util.StdDraw;
+import algorithm_4th.util.StdRandom;
+
 import java.util.Scanner;
 
 /**
@@ -57,9 +60,20 @@ abstract class SortTemplate {
         int len = scanner.nextInt();
         Comparable[] array = new Comparable[len];
         for (int i = 0; i < len; i++) {
-            array[i] = scanner.next();
+            array[i] = StdRandom.uniform();
         }
         return array;
+    }
+
+    static void drawArray(Comparable[] a) {
+        int length = a.length;
+        for (int i = 0; i < length; i++) {
+            double x = 1.0 * i / length;
+            double y = (Double) a[i] / 2.0;
+            double rw = 0.5 / length;
+            double rh = (Double) a[i] / 2.0;
+            StdDraw.filledRectangle(x, y, rw, rh);
+        }
     }
 
     /**
@@ -69,11 +83,19 @@ abstract class SortTemplate {
      */
     static void main(SortTemplate sortTemplate) {
         Comparable[] a = getArray();
+        drawArray(a);
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        StdDraw.clear();
         sortTemplate.sort(a);
         assert isSorted(a);
         for (Comparable comparable : a) {
             System.out.print(comparable + " ");
         }
+        StdDraw.show();
         System.out.println();
     }
 }
