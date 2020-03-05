@@ -1,8 +1,7 @@
 package base_knowledge.network.bio.server;
 
 import base_knowledge.network.TeaMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -10,9 +9,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.LinkedBlockingQueue;
 
+@Slf4j
 public abstract class AbstractBioServer {
-
-    private static Logger log = LoggerFactory.getLogger(AbstractBioServer.class);
 
     public static final int DEFAULT_PORT = 8888;
 
@@ -39,7 +37,6 @@ public abstract class AbstractBioServer {
             this.clientNums = clientNums;
             address = InetAddress.getByName(ip);
             serverSocket = new ServerSocket(port, clientNums, address);
-            System.out.println("BIO server has started in " + ip + "listening port " + port);
             log.info("BIO server has started in {} listening port {}", ip, port);
         } catch (IOException e) {
             e.printStackTrace();
@@ -52,7 +49,6 @@ public abstract class AbstractBioServer {
         if (remove && !client.isClosed()) {
             try {
                 client.close();
-                System.out.println("移除client " + client.getInetAddress().getHostAddress() + ":" + client.getPort());
                 log.warn("移除client {} : {}", client.getInetAddress().getHostAddress(), client.getPort());
             } catch (IOException e) {
                 e.printStackTrace();

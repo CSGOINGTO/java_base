@@ -3,8 +3,7 @@ package base_knowledge.network.bio.client;
 import base_knowledge.network.TeaHeader;
 import base_knowledge.network.TeaMessage;
 import base_knowledge.network.bio.TeaChartRoomProtocol;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -15,9 +14,8 @@ import java.util.concurrent.Executors;
 /**
  * BIO--Client
  */
+@Slf4j
 public class BioClient {
-
-    private static Logger log = LoggerFactory.getLogger(BioClient.class);
 
     private final String ip;
 
@@ -37,7 +35,6 @@ public class BioClient {
         this.name = name;
         this.header = new TeaHeader(ip, port, name);
         socket = new Socket(ip, port);
-        System.out.println("连接成功: " + ip + ":" + port);
         log.info("连接成功: {}:{}", ip, port);
     }
 
