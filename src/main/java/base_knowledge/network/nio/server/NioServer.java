@@ -1,5 +1,7 @@
 package base_knowledge.network.nio.server;
 
+import base_knowledge.network.nio.TeaCharRoomNioProtocol;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
@@ -17,6 +19,7 @@ import java.util.Set;
 public class NioServer {
 
     public static void main(String[] args) throws IOException {
+        TeaCharRoomNioProtocol protocol = TeaCharRoomNioProtocol.getInstance();
         SocketAddress address = new InetSocketAddress("127.0.0.1", 8888);
         ServerSocketChannel server = ServerSocketChannel.open();
         server.configureBlocking(false);
@@ -43,12 +46,13 @@ public class NioServer {
                     final SocketChannel channel = (SocketChannel) selectionKey.channel();
                     channel.configureBlocking(false);
                     ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
-                    int read;
-                    while ((read = channel.read(byteBuffer)) > 0) {
-                        byteBuffer.flip();
-                        System.out.println(new String(byteBuffer.array(), 0, read));
-                        byteBuffer.clear();
-                    }
+                    protocol.read(channel, byteBuffer);
+//                    int read;
+//                    while ((read = channel.read(byteBuffer)) > 0) {
+//                        byteBuffer.flip();
+//                        System.out.println(new String(byteBuffer.array(), 0, read));
+//                        byteBuffer.clear();
+//                    }
                 }
                 iterator.remove();
             }

@@ -1,11 +1,14 @@
 package base_knowledge.network.nio.client;
 
+import base_knowledge.network.TeaHeader;
+import base_knowledge.network.TeaMessage;
+import base_knowledge.network.nio.TeaCharRoomNioProtocol;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
-import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 /**
@@ -17,13 +20,16 @@ public class NioClient {
         SocketChannel client = SocketChannel.open(address);
         client.configureBlocking(false);
         ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
+        TeaHeader teaHeader = new TeaHeader("127.0.0.1", 8888, "TEST1111");
+        TeaCharRoomNioProtocol protocol = TeaCharRoomNioProtocol.getInstance();
         Scanner in = new Scanner(System.in);
         String msg;
         while ((msg = in.nextLine()) != null) {
-            byteBuffer.put(msg.getBytes(StandardCharsets.UTF_8));
-            byteBuffer.flip();
-            client.write(byteBuffer);
-            byteBuffer.clear();
+            protocol.write(client, byteBuffer, new TeaMessage(msg, teaHeader));
+//            byteBuffer.put(msg.getBytes(StandardCharsets.UTF_8));
+//            byteBuffer.flip();
+//            client.write(byteBuffer);
+//            byteBuffer.clear();
         }
         client.close();
         in.close();
