@@ -1,6 +1,9 @@
-package base_knowledge.proxy.staticProxy;
+package base_knowledge.proxy;
 
-public class Student implements Person{
+/**
+ * 被代理的学生对象
+ */
+public class Student implements Person {
 
     @Override
     public void say(String msg) {
