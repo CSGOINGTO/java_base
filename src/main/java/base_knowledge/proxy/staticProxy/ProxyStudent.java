@@ -1,9 +1,12 @@
 package base_knowledge.proxy.staticProxy;
 
+import base_knowledge.proxy.Person;
+import base_knowledge.proxy.Student;
+
 /**
  * 静态代理学生对象
  */
-public class ProxyStudent implements Person{
+public class ProxyStudent implements Person {
 
     Person person;
 
