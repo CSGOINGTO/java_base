@@ -9,15 +9,16 @@ public class FirstAnnotationAPT {
     public static void main(String[] args) {
         FirstAnnotationUser firstAnnotationUser = new FirstAnnotationUser();
         Method[] declaredMethods = firstAnnotationUser.getClass().getDeclaredMethods();
-        for (int i = 0; i < declaredMethods.length; i++) {
-            FirstAnnotation annotation = declaredMethods[i].getAnnotation(FirstAnnotation.class);
+        for (Method declaredMethod : declaredMethods) {
+            FirstAnnotation annotation = declaredMethod.getAnnotation(FirstAnnotation.class);
             if (annotation != null) {
                 try {
-                    declaredMethods[i].invoke(firstAnnotationUser, null);
+                    System.out.println(annotation.value());
+                    declaredMethod.invoke(firstAnnotationUser, null);
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 } catch (Exception e) {
-                    System.out.println(declaredMethods[i].getName() + "有bug！");
+                    System.out.println(declaredMethod.getName() + "有bug！");
                 }
             }
         }
