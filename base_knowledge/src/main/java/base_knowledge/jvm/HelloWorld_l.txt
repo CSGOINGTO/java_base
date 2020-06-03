@@ -1,0 +1,15 @@
+Compiled from "HelloWorld.java"
+public class base_knowledge.jvm.HelloWorld {
+  public base_knowledge.jvm.HelloWorld();
+    LineNumberTable:
+      line 3: 0
+
+  public static void main(java.lang.String[]);
+    LineNumberTable:
+      line 5: 0
+      line 6: 3
+      line 7: 6
+      line 8: 10
+      line 9: 14
+      line 10: 24
+}

@@ -1,0 +1,27 @@
+Compiled from "HelloWorld.java"
+public class base_knowledge.jvm.HelloWorld {
+  public base_knowledge.jvm.HelloWorld();
+    Code:
+       0: aload_0
+       1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+       4: return
+
+  public static void main(java.lang.String[]);
+    Code:
+       0: bipush        10
+       2: istore_1
+       3: bipush        20
+       5: istore_2
+       6: iload_2
+       7: iload_1
+       8: idiv
+       9: istore_3
+      10: bipush        100
+      12: istore        4
+      14: getstatic     #2                  // Field java/lang/System.out:Ljava/io/PrintStream;
+      17: iload_3
+      18: iload         4
+      20: iadd
+      21: invokevirtual #3                  // Method java/io/PrintStream.println:(I)V
+      24: return
+}
