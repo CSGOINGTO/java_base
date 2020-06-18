@@ -6,8 +6,10 @@ import java.util.concurrent.CyclicBarrier;
 public class CyclicBarrierTest {
     public static void main(String[] args) {
         int num = 3;
-        CyclicBarrier cyclicBarrier = new CyclicBarrier(num);
-        for (int i = 0; i < num; i++) {
+        CyclicBarrier cyclicBarrier = new CyclicBarrier(num, () -> {
+            System.out.println("工作完成!");
+        });
+        for (int i = 0; i < num * 2; i++) {
             new Thread(() -> {
                 try {
                     String name = Thread.currentThread().getName();
