@@ -11,6 +11,7 @@
     <modules>
         <module>rabbit_learn</module>
         <module>base_knowledge</module>
+        <module>spring_learn</module>
     </modules>
 
     <properties>
@@ -20,6 +21,7 @@
         <netty-all.version>4.1.32.Final</netty-all.version>
         <dubbo.version>2.6.6</dubbo.version>
         <amqp-client.version>5.7.2</amqp-client.version>
+        <spring.version>5.2.6.RELEASE</spring.version>
     </properties>
 
     <dependencyManagement>
@@ -54,6 +56,37 @@
                 <groupId>com.rabbitmq</groupId>
                 <artifactId>amqp-client</artifactId>
                 <version>${amqp-client.version}</version>
+            </dependency>
+            <!-- spring -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-core</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-beans</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-expression</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context-support</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-test</artifactId>
+                <version>${spring.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
