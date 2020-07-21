@@ -3,9 +3,9 @@ package base_knowledge.rpc.discovery.impl;
 import base_knowledge.rpc.discovery.ServiceInfo;
 import base_knowledge.rpc.discovery.ServiceInfoDiscoverer;
 import base_knowledge.rpc.utils.PropertiesUtils;
-import base_knowledge.zookeeper.MyZkSerializer;
 import com.google.gson.Gson;
 import org.I0Itec.zkclient.ZkClient;
+import org.I0Itec.zkclient.serialize.SerializableSerializer;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -21,7 +21,7 @@ public class ZookeeperServiceInfoDiscoverer implements ServiceInfoDiscoverer {
     public ZookeeperServiceInfoDiscoverer() {
         String addr = PropertiesUtils.getProperties("zk.address");
         zkClient = new ZkClient(addr);
-        zkClient.setZkSerializer(new MyZkSerializer());
+        zkClient.setZkSerializer(new SerializableSerializer());
     }
 
     @Override

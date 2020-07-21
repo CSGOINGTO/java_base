@@ -1,17 +1,17 @@
 package base_knowledge.rpc.server;
 
 import base_knowledge.rpc.discovery.ServiceInfo;
-import base_knowledge.zookeeper.MyZkSerializer;
 import com.google.gson.Gson;
 import org.I0Itec.zkclient.ZkClient;
+import org.I0Itec.zkclient.serialize.SerializableSerializer;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-public class ZkExportServiceRegister extends DefaultServiceRegister implements ServiceRegister{
+public class ZkExportServiceRegister extends DefaultServiceRegister implements ServiceRegister {
 
     private String zkAddress;
-    
+
     private ZkClient zkClient;
 
     private static final String CENTER_ROOT_PATH = "/Rpc-framework";
@@ -19,7 +19,7 @@ public class ZkExportServiceRegister extends DefaultServiceRegister implements S
     public ZkExportServiceRegister(String zkAddress) {
         this.zkAddress = zkAddress;
         zkClient = new ZkClient(this.zkAddress);
-        zkClient.setZkSerializer(new MyZkSerializer());
+        zkClient.setZkSerializer(new SerializableSerializer());
     }
 
     @Override
