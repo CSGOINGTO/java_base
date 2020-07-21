@@ -22,6 +22,7 @@
         <dubbo.version>2.6.6</dubbo.version>
         <amqp-client.version>5.7.2</amqp-client.version>
         <spring.version>5.2.6.RELEASE</spring.version>
+        <aspect.version>1.9.5</aspect.version>
     </properties>
 
     <dependencyManagement>
@@ -87,6 +88,16 @@
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-test</artifactId>
                 <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-aop</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjweaver</artifactId>
+                <version>${aspect.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
