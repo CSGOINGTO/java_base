@@ -12,6 +12,7 @@
         <module>rabbit_learn</module>
         <module>base_knowledge</module>
         <module>spring_learn</module>
+        <module>kafka_learn</module>
     </modules>
 
     <properties>
