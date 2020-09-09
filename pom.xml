@@ -19,7 +19,7 @@
         <java.version>1.8</java.version>
         <zookeeper.version>3.5.7</zookeeper.version>
         <zkclient.version>0.10</zkclient.version>
-        <netty-all.version>4.1.32.Final</netty-all.version>
+        <netty-all.version>4.1.42.Final</netty-all.version>
         <dubbo.version>2.6.6</dubbo.version>
         <amqp-client.version>5.7.2</amqp-client.version>
         <spring.version>5.2.6.RELEASE</spring.version>
