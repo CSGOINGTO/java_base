@@ -345,6 +345,7 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
     private class Itr implements Iterator<E> {
         /**
          * Index of element to be returned by subsequent call to next.
+         * 对next随后的调用所返回的元素的索引
          */
         int cursor = 0;
 
@@ -352,6 +353,7 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
          * Index of element returned by most recent call to next or
          * previous.  Reset to -1 if this element is deleted by a call
          * to remove.
+         * 最新调用next或previous所返回的元素的索引。如果这个元素通过调用remove被删除了，将被重置为-1
          */
         int lastRet = -1;
 
@@ -363,16 +365,22 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
         int expectedModCount = modCount;
 
         public boolean hasNext() {
+            // 通过判断cursor是否与list集合中的元素的长度相同，获取是否将list集合遍历完成
             return cursor != size();
         }
 
         public E next() {
+            // 判断modCount是否与expectedModCount的值相同，如果不同，则抛出ConcurrentModificationException
             checkForComodification();
             try {
+                // 获取当前所遍历到的索引所对应的值
                 int i = cursor;
                 E next = get(i);
+                // 将遍历之后的索引赋值给lastRet
                 lastRet = i;
+                // 将cursor的值+1
                 cursor = i + 1;
+                // 返回当前所遍历到的值
                 return next;
             } catch (IndexOutOfBoundsException e) {
                 checkForComodification();
@@ -381,14 +389,18 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
         }
 
         public void remove() {
+            // lastRet的值<0时，判断为非法的操作
             if (lastRet < 0)
                 throw new IllegalStateException();
+            // 判断modCount是否与expectedModCount的值相同，如果不同，则抛出ConcurrentModificationException
             checkForComodification();
 
             try {
                 AbstractList.this.remove(lastRet);
                 if (lastRet < cursor)
                     cursor--;
+                // 将lastRet置为-1，防止多次调用remove方法。
+                // 在调用remove之前会调用next方法，next方法会将lastRet重置为当前的索引。
                 lastRet = -1;
                 expectedModCount = modCount;
             } catch (IndexOutOfBoundsException e) {
@@ -407,6 +419,7 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
             cursor = index;
         }
 
+        // 通过cursor是否等于0来判断是否还有前一个元素
         public boolean hasPrevious() {
             return cursor != 0;
         }
@@ -414,8 +427,10 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
         public E previous() {
             checkForComodification();
             try {
+                // 获取到当前位置的前一个元素
                 int i = cursor - 1;
                 E previous = get(i);
+                // lastRet为当前位置的前一个元素的索引
                 lastRet = cursor = i;
                 return previous;
             } catch (IndexOutOfBoundsException e) {
