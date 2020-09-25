@@ -1,4 +1,4 @@
-package base_knowledge.sourcecode;
+package base_knowledge.sourcecode.java.util;
 
 import java.util.*;
 import java.util.function.Consumer;
