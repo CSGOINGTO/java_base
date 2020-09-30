@@ -3,7 +3,7 @@ package base;
 import org.junit.Test;
 
 import java.text.DecimalFormat;
-import java.util.Arrays;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class BaseTest {
@@ -19,7 +19,7 @@ public class BaseTest {
         System.out.println(Math.round(0.666));
 
         String type = "datacenter";
-        if(type != null && !"".endsWith(type) && type.endsWith("datacenter")){
+        if (type != null && !"".endsWith(type) && type.endsWith("datacenter")) {
             System.out.println(type);
         }
     }
@@ -60,5 +60,53 @@ public class BaseTest {
     public void testString() {
         String s = "_xxx_12.23.23";
         System.out.println(Arrays.toString(s.split("_")));
+    }
+
+    @Test
+    public void testException() throws InterruptedException {
+        try {
+            System.out.println("xxxxxx");
+            Thread.sleep(10000000);
+        } catch (Error error) {
+            System.out.println("发生了Error");
+        } finally {
+            System.out.println("执行完毕！！！！");
+        }
+
+    }
+
+    @Test
+    public void testHashMap(){
+        try {
+            Map<Object, Object> listStringMap = new HashMap<>();
+            List<String> list1 = new ArrayList<>();
+            List<String> list2 = new ArrayList<>();
+            list1.add("list1");
+            list2.add("list2");
+            listStringMap.put(list1, "list1");
+            listStringMap.put(list2, "list2");
+            listStringMap.put(list1, listStringMap);
+            // 将自己作为key是不行的，但是可以作为value，但是不建议
+//            listStringMap.put(listStringMap, listStringMap);
+            System.out.println(listStringMap.get(listStringMap));
+            System.out.println(listStringMap.get(list1));
+            System.out.println(listStringMap.get(list2));
+            list1.clear();
+            list1.add("list2");
+            System.out.println(listStringMap.get(list1));
+            System.out.println(listStringMap.get(list2));
+        } finally {
+            System.out.println("结束调用...");
+        }
+
+    }
+
+    @Test
+    public void testListSize() {
+        int size = 10;
+        for (int i = 0; i < 100; i++) {
+            System.out.println(size >> 1);
+            size += size >> 1;
+        }
     }
 }
