@@ -136,6 +136,7 @@ public interface Map<K,V> {
      * Returns the number of key-value mappings in this map.  If the
      * map contains more than <tt>Integer.MAX_VALUE</tt> elements, returns
      * <tt>Integer.MAX_VALUE</tt>.
+     * 返回map中key-value的数量。如果map中包含多于Integer.MAX_VALUE数量的元素，则返回Integer.MAX_VALUE
      *
      * @return the number of key-value mappings in this map
      */
@@ -143,6 +144,7 @@ public interface Map<K,V> {
 
     /**
      * Returns <tt>true</tt> if this map contains no key-value mappings.
+     * 如果map中不包含key-value的映射则返回true。
      *
      * @return <tt>true</tt> if this map contains no key-value mappings
      */
@@ -154,15 +156,21 @@ public interface Map<K,V> {
      * this map contains a mapping for a key <tt>k</tt> such that
      * <tt>(key==null ? k==null : key.equals(k))</tt>.  (There can be
      * at most one such mapping.)
+     * 如果map中包含指定的key的一个映射，则返回true。
+     * 通常来说，只有map中包含像key == null ? k == null : key.equals(k)的键的一个映射时，返回true。（可以包含多个这样的映射）
      *
      * @param key key whose presence in this map is to be tested
      * @return <tt>true</tt> if this map contains a mapping for the specified
      *         key
      * @throws ClassCastException if the key is of an inappropriate type for
      *         this map
+     *         如果key的类型不符合，抛出ClassCastException
+     *
      * (<a href="{@docRoot}/java/util/Collection.html#optional-restrictions">optional</a>)
      * @throws NullPointerException if the specified key is null and this map
      *         does not permit null keys
+     *         当key是null且map不支持为null的key时，抛出NullPointerException
+     *
      * (<a href="{@docRoot}/java/util/Collection.html#optional-restrictions">optional</a>)
      */
     boolean containsKey(Object key);
@@ -174,15 +182,22 @@ public interface Map<K,V> {
      * <tt>(value==null ? v==null : value.equals(v))</tt>.  This operation
      * will probably require time linear in the map size for most
      * implementations of the <tt>Map</tt> interface.
+     * 如果map中有一个或多个key映射到指定的value时，返回true。
+     * 通常来说，只有map中包含至少一个映射的像value == null ? v == null : value.equals(v)的value时返回true。
+     * 这个操作对于大多数的Mao接口的实现者来说，所需的时间接近这个map的长度。
      *
      * @param value value whose presence in this map is to be tested
      * @return <tt>true</tt> if this map maps one or more keys to the
      *         specified value
      * @throws ClassCastException if the value is of an inappropriate type for
      *         this map
+     *         如果value的类型不符合，抛出ClassCastException
+     *
      * (<a href="{@docRoot}/java/util/Collection.html#optional-restrictions">optional</a>)
      * @throws NullPointerException if the specified value is null and this
      *         map does not permit null values
+     *         如果指定的value为null并且该map不允许为null的value时，抛出NullPointerException
+     *
      * (<a href="{@docRoot}/java/util/Collection.html#optional-restrictions">optional</a>)
      */
     boolean containsValue(Object value);
@@ -190,26 +205,36 @@ public interface Map<K,V> {
     /**
      * Returns the value to which the specified key is mapped,
      * or {@code null} if this map contains no mapping for the key.
+     * 返回指定的key被映射的value，或者如果该map不包含key的映射时，返回null。
      *
      * <p>More formally, if this map contains a mapping from a key
      * {@code k} to a value {@code v} such that {@code (key==null ? k==null :
      * key.equals(k))}, then this method returns {@code v}; otherwise
      * it returns {@code null}.  (There can be at most one such mapping.)
+     * 通常来说，如果该map包含一个key到value的映射，那么这个方法返回value，否则将返回null。
      *
      * <p>If this map permits null values, then a return value of
      * {@code null} does not <i>necessarily</i> indicate that the map
      * contains no mapping for the key; it's also possible that the map
      * explicitly maps the key to {@code null}.  The {@link #containsKey
      * containsKey} operation may be used to distinguish these two cases.
+     * 如果该map允许为null的value，那么返回的为null的value并不是必要的，表明该map对于该key并不包含相应的映射；或者可能该map明确存在一个key-null的映射。
+     * containsKey的操作可以用于区分这两种情况。
      *
      * @param key the key whose associated value is to be returned
      * @return the value to which the specified key is mapped, or
      *         {@code null} if this map contains no mapping for the key
+     *         返回指定的key在该map中对应的value，或者如果该map没有指定key所对应的映射时，返回null。
+     *
      * @throws ClassCastException if the key is of an inappropriate type for
      *         this map
+     *         如果key的类型对于该map是不适当的，抛出ClassCastException
+     *
      * (<a href="{@docRoot}/java/util/Collection.html#optional-restrictions">optional</a>)
      * @throws NullPointerException if the specified key is null and this map
      *         does not permit null keys
+     *         如果指定的key是null并且该map不允许为null的key，抛出NullPointerException
+     *
      * (<a href="{@docRoot}/java/util/Collection.html#optional-restrictions">optional</a>)
      */
     V get(Object key);
@@ -223,6 +248,8 @@ public interface Map<K,V> {
      * <tt>m</tt> is said to contain a mapping for a key <tt>k</tt> if and only
      * if {@link #containsKey(Object) m.containsKey(k)} would return
      * <tt>true</tt>.)
+     * 将指定的value与指定的key在该map中相关联（可选操作）
+     * 如果该map对于该key预先包含了一个映射，那么之前的value将会被指定的value所取代。（只有m.containsKey(k)返回true时，map m才可以说包含了一个为k的key的映射）
      *
      * @param key key with which the specified value is to be associated
      * @param value value to be associated with the specified key
@@ -233,12 +260,19 @@ public interface Map<K,V> {
      *         if the implementation supports <tt>null</tt> values.)
      * @throws UnsupportedOperationException if the <tt>put</tt> operation
      *         is not supported by this map
+     *         如果put操作在该map中不支持，抛出UnsupportedOperationException
+     *
      * @throws ClassCastException if the class of the specified key or value
      *         prevents it from being stored in this map
+     *         如果指定key或value的类防止被存储到该map中时，抛出ClassCastException
+     *
      * @throws NullPointerException if the specified key or value is null
      *         and this map does not permit null keys or values
+     *         如果指定的key或value是null，并且该map不允许为null的key或value时，抛出NullPointerException
+     *
      * @throws IllegalArgumentException if some property of the specified key
      *         or value prevents it from being stored in this map
+     *         如果指定的key或value的一些属性被阻止存储到该map中，抛出IllegalArgumentException
      */
     V put(K key, V value);
 
@@ -248,28 +282,39 @@ public interface Map<K,V> {
      * from key <tt>k</tt> to value <tt>v</tt> such that
      * <code>(key==null ?  k==null : key.equals(k))</code>, that mapping
      * is removed.  (The map can contain at most one such mapping.)
+     * 从该map中删除key对应的映射（如果存在的话）（可选操作）。
+     * 通常来说，如果该map包含一个由key k到 value v的映射（k满足key == null ? k == null : key.equals(k)）,这个映射将被删除。
      *
      * <p>Returns the value to which this map previously associated the key,
      * or <tt>null</tt> if the map contained no mapping for the key.
+     * 返回此映射先前与之关联的value，或者如果这个map中没有该key所对应的映射时，返回null。
      *
      * <p>If this map permits null values, then a return value of
      * <tt>null</tt> does not <i>necessarily</i> indicate that the map
      * contained no mapping for the key; it's also possible that the map
      * explicitly mapped the key to <tt>null</tt>.
+     * 如果该map允许为null的value，那么返回一个为null的value来指明该map对于该key没有对应的映射，并不是很有必要；还有可能该map中明确的存在一个key-null的映射。
      *
      * <p>The map will not contain a mapping for the specified key once the
      * call returns.
+     * 一旦调用返回，该map中将不包含指定的key的映射。
      *
      * @param key key whose mapping is to be removed from the map
      * @return the previous value associated with <tt>key</tt>, or
      *         <tt>null</tt> if there was no mapping for <tt>key</tt>.
      * @throws UnsupportedOperationException if the <tt>remove</tt> operation
      *         is not supported by this map
+     *         如果remove的操作在该map中不被支持，将抛出UnsupportedOperationException
+     *
      * @throws ClassCastException if the key is of an inappropriate type for
      *         this map
+     *         如果该key的类型对于该map来说是不支持的，将抛出ClassCastException
+     *
      * (<a href="{@docRoot}/java/util/Collection.html#optional-restrictions">optional</a>)
      * @throws NullPointerException if the specified key is null and this
      *         map does not permit null keys
+     *         如果指定的key为null并且该map并不允许为null的key时，抛出NullPointerException
+     *
      * (<a href="{@docRoot}/java/util/Collection.html#optional-restrictions">optional</a>)
      */
     V remove(Object key);
@@ -284,6 +329,8 @@ public interface Map<K,V> {
      * for each mapping from key <tt>k</tt> to value <tt>v</tt> in the
      * specified map.  The behavior of this operation is undefined if the
      * specified map is modified while the operation is in progress.
+     * 从指定的map中复制所有的映射到该map中。这个调用效果相当于对指定的map中的key k到value v的每一个映射调用put(k, v)。
+     * 如果在操作过程中修改了指定的map，则此操作的行为未定义。
      *
      * @param m mappings to be stored in this map
      * @throws UnsupportedOperationException if the <tt>putAll</tt> operation
@@ -301,6 +348,8 @@ public interface Map<K,V> {
     /**
      * Removes all of the mappings from this map (optional operation).
      * The map will be empty after this call returns.
+     * 从该map中删除所有的映射（可选操作）。
+     * 该方法被调用之后，该map将为空。
      *
      * @throws UnsupportedOperationException if the <tt>clear</tt> operation
      *         is not supported by this map
@@ -322,8 +371,14 @@ public interface Map<K,V> {
      * <tt>removeAll</tt>, <tt>retainAll</tt>, and <tt>clear</tt>
      * operations.  It does not support the <tt>add</tt> or <tt>addAll</tt>
      * operations.
+     * 返回这个map中的所有key的一个Set视图。
+     * 该set是与该map相关联的，因此对map的更改反映到set中，反之亦然。
+     * 如果在set进行迭代时修改了该map（iterator自己的remove操作除外），那么迭代的结果是未定义的。
+     * 这个set支持元素删除，它通过Iterator.remove，Set.remove，removeAll，retainAll和clear从该map中删除相应的映射。
+     * 它不支持add或addAll操作。
      *
      * @return a set view of the keys contained in this map
+     * 返回该map中的key的一个set视图。
      */
     Set<K> keySet();
 
@@ -339,8 +394,14 @@ public interface Map<K,V> {
      * <tt>Collection.remove</tt>, <tt>removeAll</tt>,
      * <tt>retainAll</tt> and <tt>clear</tt> operations.  It does not
      * support the <tt>add</tt> or <tt>addAll</tt> operations.
+     * 返回此map中包含value的一个Collection视图。
+     * 这个collection与该map相关联的，因此对map的更改反映到collection中，反之亦然。
+     * 如果在collection进行迭代的过程中修改了该map（iterator自己的remove操作除外），那么迭代的结果是未定义的。
+     * 这个collection支持元素删除，它通过Iterator.remove，Set.remove，removeAll，retainAll和clear从该map中删除相应的映射。
+     * 它不支持add或addAll操作。
      *
      * @return a collection view of the values contained in this map
+     * 返回map中的value的一个collection视图。
      */
     Collection<V> values();
 
@@ -357,8 +418,14 @@ public interface Map<K,V> {
      * <tt>Set.remove</tt>, <tt>removeAll</tt>, <tt>retainAll</tt> and
      * <tt>clear</tt> operations.  It does not support the
      * <tt>add</tt> or <tt>addAll</tt> operations.
+     * 返回此map中包含映射的一个Set视图。
+     * 这个Set是与该map相关联的，因此对map的更改将反映到set中，反之亦然。
+     * 如果在set进行迭代的过程中修改了该map（iterator自己的remove操作除外），那么迭代的结果是未定义的。
+     * 这个set支持元素删除，它通过Iterator.remove，Set.remove，removeAll，retainAll和clear从该map中删除相应的映射。
+     * 它不支持add或addAll操作。
      *
      * @return a set view of the mappings contained in this map
+     * 返回map中映射的一个set视图。
      */
     Set<Entry<K, V>> entrySet();
 
@@ -371,6 +438,7 @@ public interface Map<K,V> {
      * the behavior of a map entry is undefined if the backing map has been
      * modified after the entry was returned by the iterator, except through
      * the <tt>setValue</tt> operation on the map entry.
+     * key-value对
      *
      * @see Map#entrySet()
      * @since 1.2
