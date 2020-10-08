@@ -20,6 +20,10 @@ import java.util.function.Function;
  * unsynchronized and permits nulls.)  This class makes no guarantees as to
  * the order of the map; in particular, it does not guarantee that the order
  * will remain constant over time.
+ * 基于哈希表实现的Map接口。此实现提供了所有可选映射操作，并允许空值和空键。
+ * (HashMap类大致相当于Hashtable，只是它是不同步的，并且允许空值。)
+ *
+ * 这个类不能保证映射的顺序;特别是，它不能保证顺序随时间保持不变。
  *
  * <p>This implementation provides constant-time performance for the basic
  * operations (<tt>get</tt> and <tt>put</tt>), assuming the hash function
@@ -29,6 +33,9 @@ import java.util.function.Function;
  * of key-value mappings).  Thus, it's very important not to set the initial
  * capacity too high (or the load factor too low) if iteration performance is
  * important.
+ * 这个实现提供了固定时间复杂度的get，put等基本的操作，假设哈希函数将元素正确地分散在bucket中。
+ * 对集合视图的迭代需要的时间与HashMap实例的“容量”(bucket的数量)加上它的大小(键-值映射的数量)成正比。
+ * 因此，如果迭代性能很重要，那么不要将初始容量设置得太高(或load factor系数设置得太低)，这一点非常重要。
  *
  * <p>An instance of <tt>HashMap</tt> has two parameters that affect its
  * performance: <i>initial capacity</i> and <i>load factor</i>.  The
@@ -40,6 +47,12 @@ import java.util.function.Function;
  * current capacity, the hash table is <i>rehashed</i> (that is, internal data
  * structures are rebuilt) so that the hash table has approximately twice the
  * number of buckets.
+ * HashMap的实例有两个影响其性能的参数:初始容量（initial）和装载因子（load factor）。
+ * 容量（capacity）是哈希表中的桶（bucket）数，初始容量（initial capacity）就是创建哈希表时的容量。
+ *
+ * 负载因子（load factor）是一种度量方法，用来衡量在自动增加哈希表的容量之前，哈希表允许达到的满度。
+ * 当哈希表中的entry数超过负载因子和当前容量的乘积时（load factor * current capacity），
+ * 哈希表将被重新哈希(即重新构建内部数据结构)，这样哈希表的bucket数大约是原来的两倍。
  *
  * <p>As a general rule, the default load factor (.75) offers a good
  * tradeoff between time and space costs.  Higher values decrease the
@@ -51,6 +64,10 @@ import java.util.function.Function;
  * rehash operations.  If the initial capacity is greater than the
  * maximum number of entries divided by the load factor, no rehash
  * operations will ever occur.
+ * 通常来讲，默认的加载因子(0.75)能够在时间和空间上提供一个好的平衡，
+ * 更高的值会减少空间上的开支但是会增加查询花费的时间（体现在HashMap类中get、put方法上），
+ * 当设置初始化容量时，应该考虑到map中会存放entry的数量和加载因子，以便最少次数的进行rehash操作，
+ * 如果初始容量大于最大entry数除以加载因子，则不会发生 rehash 操作。（entry nums < load factor * capacity）
  *
  * <p>If many mappings are to be stored in a <tt>HashMap</tt>
  * instance, creating it with a sufficiently large capacity will allow
@@ -60,6 +77,10 @@ import java.util.function.Function;
  * down performance of any hash table. To ameliorate impact, when keys
  * are {@link Comparable}, this class may use comparison order among
  * keys to help break ties.
+ * 如果很多映射关系要存储在 HashMap 实例中，则相对于按需执行自动的 rehash 操作以增大表的容量来说，
+ * 使用足够大的初始容量创建它将使得映射关系能更有效地存储。
+ * 注意，使用具有相同hashCode值的多个键确实会拖慢任何哈希表的性能。
+ * 为了减轻碰撞，当键有可比性时，这个类可以通过键之间的比较顺序来断绝关系。
  *
  * <p><strong>Note that this implementation is not synchronized.</strong>
  * If multiple threads access a hash map concurrently, and at least one of
@@ -69,6 +90,10 @@ import java.util.function.Function;
  * associated with a key that an instance already contains is not a
  * structural modification.)  This is typically accomplished by
  * synchronizing on some object that naturally encapsulates the map.
+ * 注意，这个实现没有同步。
+ * 如果多个线程并发地访问一个散列映射，并且至少有一个线程修改了映射的结构，那么它必须在外部同步。
+ * (结构修改是添加或删除一个或多个映射的任何操作;仅仅改变与实例已经包含的键相关联的值不是结构修改。)
+ * 这通常是通过在自然封装映射的某个对象上同步来实现的。
  *
  * If no such object exists, the map should be "wrapped" using the
  * {@link Collections#synchronizedMap Collections.synchronizedMap}
@@ -84,6 +109,12 @@ import java.util.function.Function;
  * modification, the iterator fails quickly and cleanly, rather than risking
  * arbitrary, non-deterministic behavior at an undetermined time in the
  * future.
+ * 如果没有这样的对象存在，map应该通过Collections.synchronizedMap方法来封装。(所有方法都加上synchronized)
+ * 最好是在创建的时候完成，来防止意外的非线程安全的访问map。
+ * 这个类的所有集合视图方法的迭代器的返回都遵循fail-fast策略:
+ * 如果map在创建完迭代器之后的任何时机结构发生改变，除了通过迭代器自己的remove方法外，
+ * 迭代器将会抛出ConcurrentModificationException.
+ * 因此，当并发修改的情况下，迭代器会快速干净的失败而不是在将来某个不确定的时间冒着任意的、不确定行为的风险。
  *
  * <p>Note that the fail-fast behavior of an iterator cannot be guaranteed
  * as it is, generally speaking, impossible to make any hard guarantees in the
@@ -92,6 +123,9 @@ import java.util.function.Function;
  * Therefore, it would be wrong to write a program that depended on this
  * exception for its correctness: <i>the fail-fast behavior of iterators
  * should be used only to detect bugs.</i>
+ * 注意，迭代器本身的fail-fast行为不能被保证，通常来说，在非线程安全的并发修改存在的情况下，不可能做任何硬性的保证。
+ * 迭代器的fail-fast机制抛出ConcurrentModificationException是最佳的处理方式。
+ * 因此，编写依赖于这个异常的程序来保证其正确性是错误的做法：迭代器的fail-fast行为仅仅应该用来探测bugs。
  *
  * <p>This class is a member of the
  * <a href="{@docRoot}/../technotes/guides/collections/index.html">
@@ -208,6 +242,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
 
     /**
      * The default initial capacity - MUST be a power of two.
+     * 默认初始容量（必须是2的幂次方）
      */
     static final int DEFAULT_INITIAL_CAPACITY = 1 << 4; // aka 16
 
@@ -576,6 +611,8 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      * Associates the specified value with the specified key in this map.
      * If the map previously contained a mapping for the key, the old
      * value is replaced.
+     * 在该Map中将指定的key和指定的value做关联。
+     * 如果该Map之前已经包含有该key的映射，则之前的value值将被替换。
      *
      * @param key key with which the specified value is to be associated
      * @param value value to be associated with the specified key
@@ -651,9 +688,13 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      * @return the table
      */
     final Node<K,V>[] resize() {
+        // oldTab当前的节点数组
         Node<K,V>[] oldTab = table;
+        // oldCap当前节点数组的长度
         int oldCap = (oldTab == null) ? 0 : oldTab.length;
+        // oldThr当前的初始化长度
         int oldThr = threshold;
+        // newCap扩容后的数组长度，newThr扩容后的初始化长度
         int newCap, newThr = 0;
         if (oldCap > 0) {
             if (oldCap >= MAXIMUM_CAPACITY) {
