@@ -250,11 +250,13 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      * The maximum capacity, used if a higher value is implicitly specified
      * by either of the constructors with arguments.
      * MUST be a power of two <= 1<<30.
+     * 最大的容量，如果任何一个带参数的构造函数隐式指定了较大的值，则使用。
      */
     static final int MAXIMUM_CAPACITY = 1 << 30;
 
     /**
      * The load factor used when none specified in constructor.
+     * 当使用参数为空的构造器时的load factor（0.75）
      */
     static final float DEFAULT_LOAD_FACTOR = 0.75f;
 
@@ -403,17 +405,22 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      * necessary. When allocated, length is always a power of two.
      * (We also tolerate length zero in some operations to allow
      * bootstrapping mechanics that are currently not needed.)
+     * 该table，在第一次使用时初始化，并且调整大小也是必须的。
+     * 当生成时，长度总是2的幂次方。（在某些操作中，我们也允许长度为零，以允许当前并不需要的引导机制）
+     *
      */
     transient Node<K,V>[] table;
 
     /**
      * Holds cached entrySet(). Note that AbstractMap fields are used
      * for keySet() and values().
+     * 保持缓存的entrySet()。注意AbstractMap字段用于keySet()和values()
      */
     transient Set<Entry<K,V>> entrySet;
 
     /**
      * The number of key-value mappings contained in this map.
+     * 在该Map中key-value映射的数量
      */
     transient int size;
 
@@ -428,7 +435,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
 
     /**
      * The next size value at which to resize (capacity * load factor).
-     *
+     * 要进行size调整的阈值（capacity * load factor）
      * @serial
      */
     // (The javadoc description is true upon serialization.
@@ -637,32 +644,45 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      */
     final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
                    boolean evict) {
+        // tab为存放node的数组，p为当存放node位置被占用之后的node节点，n为存放node数组的长度，i为新node存在在数组中的下标
         Node<K,V>[] tab; Node<K,V> p; int n, i;
+        // 当table为null或table的size为0时，初始化table
         if ((tab = table) == null || (n = tab.length) == 0)
             n = (tab = resize()).length;
+        // 如果下标为i的位置为null，说明当前位置是可以直接存放的。
         if ((p = tab[i = (n - 1) & hash]) == null)
             tab[i] = newNode(hash, key, value, null);
+        // 存放的位置处已经存在节点了
         else {
+            // p = tab[i = (n - 1) & hash]
             Node<K,V> e; K k;
+            // 如果占用位置node的hash值与新插入的hash值相同，并且key的值也相同，将占用位置node p赋值给e
             if (p.hash == hash &&
                 ((k = p.key) == key || (key != null && key.equals(k))))
                 e = p;
+            // 发生hash碰撞，并且当前已经是树形结构
             else if (p instanceof TreeNode)
                 e = ((TreeNode<K,V>)p).putTreeVal(this, tab, hash, key, value);
+            // 发生hash碰撞，当前还是链表结构
             else {
                 for (int binCount = 0; ; ++binCount) {
+                    // 当p.next为null时，说明当前node节点为链表的最后一个节点，将新节点插入到该节点后面
                     if ((e = p.next) == null) {
                         p.next = newNode(hash, key, value, null);
+                        // binCount >= 7时，进入到链型结构转变为树形结构的流程
                         if (binCount >= TREEIFY_THRESHOLD - 1) // -1 for 1st
                             treeifyBin(tab, hash);
                         break;
                     }
+                    // 如果链表内的某个节点的hash值与新节点相同，并且新节点的key也与新节点相同，直接结束循环
                     if (e.hash == hash &&
                         ((k = e.key) == key || (key != null && key.equals(k))))
                         break;
+                    // 相当于p = p.next(e = p.next)
                     p = e;
                 }
             }
+            // 对于key已经有相关的映射存在
             if (e != null) { // existing mapping for key
                 V oldValue = e.value;
                 if (!onlyIfAbsent || oldValue == null)
@@ -692,34 +712,48 @@ public class HashMap<K,V> extends AbstractMap<K,V>
         Node<K,V>[] oldTab = table;
         // oldCap当前节点数组的长度
         int oldCap = (oldTab == null) ? 0 : oldTab.length;
-        // oldThr当前的初始化长度
+        // oldThr当前resize阈值
         int oldThr = threshold;
-        // newCap扩容后的数组长度，newThr扩容后的初始化长度
+        // newCap扩容后的数组长度，newThr扩容后的resize阈值
         int newCap, newThr = 0;
+        // 当前节点数组长度大于0
         if (oldCap > 0) {
+            // 数组长度已经最大，将resize的阈值也设置为最大
             if (oldCap >= MAXIMUM_CAPACITY) {
                 threshold = Integer.MAX_VALUE;
                 return oldTab;
             }
+            // newCap扩容后的数组长度小于数组的最大长度，并且当前数组的长度大于等于默认的初始化数组长度（保证数组已经被初始化了，如果没有初始化的话，oldThr，oldCap都为0）
             else if ((newCap = oldCap << 1) < MAXIMUM_CAPACITY &&
                      oldCap >= DEFAULT_INITIAL_CAPACITY)
+                // 扩容后的resize阈值为当前的阈值左移1位。
                 newThr = oldThr << 1; // double threshold
         }
+        // 当前节点数组长度<=0，并且当前resize的阈值>0（初始化了容量和阈值，构造器Map(int initialCapacity, float loadFactor)）
         else if (oldThr > 0) // initial capacity was placed in threshold
+            // 扩容后的数组长度等于当前resize的阈值（保证数组长度为2的幂次方的关键，oldThr为threshold，threshold为初始化长度的第一次大于等于的2的幂次方的值）
             newCap = oldThr;
+        // 当前节点数组长度<=0，并且当前resize的阈值也<=0
         else {               // zero initial threshold signifies using defaults
+            // 扩容后的数组长度为默认的初始化长度（16）
             newCap = DEFAULT_INITIAL_CAPACITY;
+            // 扩容后的热size的阈值（0。75 * 16 = 12）
             newThr = (int)(DEFAULT_LOAD_FACTOR * DEFAULT_INITIAL_CAPACITY);
         }
+        // 扩容后的resize阈值2为0（初始化了容量和阈值，构造器Map(int initialCapacity, float loadFactor)）
         if (newThr == 0) {
             float ft = (float)newCap * loadFactor;
+            // 扩容后的resize的阈值为ft的int值
             newThr = (newCap < MAXIMUM_CAPACITY && ft < (float)MAXIMUM_CAPACITY ?
                       (int)ft : Integer.MAX_VALUE);
         }
+        // 将扩容后的resize阈值赋值给threshold
         threshold = newThr;
         @SuppressWarnings({"rawtypes","unchecked"})
-            Node<K,V>[] newTab = (Node<K,V>[])new Node[newCap];
+        // 声明一个新的节点数组，长度为扩容后的节点数组的长度
+        Node<K,V>[] newTab = (Node<K,V>[])new Node[newCap];
         table = newTab;
+        // 如果之前的节点数组中存在数据的话，将之前的数据转移到新的节点数组中
         if (oldTab != null) {
             for (int j = 0; j < oldCap; ++j) {
                 Node<K,V> e;
@@ -771,6 +805,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      */
     final void treeifyBin(Node<K,V>[] tab, int hash) {
         int n, index; Node<K,V> e;
+        // 当数组的长度小于MIN_TREEIFY_CAPACITY（64）时，依然只是做resize的操作，而不是树形化
         if (tab == null || (n = tab.length) < MIN_TREEIFY_CAPACITY)
             resize();
         else if ((e = tab[index = (n - 1) & hash]) != null) {
