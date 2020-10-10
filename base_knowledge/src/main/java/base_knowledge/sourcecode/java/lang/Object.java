@@ -46,6 +46,8 @@ public class Object {
      * Returns a hash code value for the object. This method is
      * supported for the benefit of hash tables such as those provided by
      * {@link java.util.HashMap}.
+     * 返回一个对象的hashcode值。这个方法是支持对于像HashMap基于hash tables的使用。
+     *
      * <p>
      * The general contract of {@code hashCode} is:
      * <ul>
@@ -65,6 +67,9 @@ public class Object {
      *     programmer should be aware that producing distinct integer results
      *     for unequal objects may improve the performance of hash tables.
      * </ul>
+     * hashcode的基本约定是：
+     * 每当在java应用程序执行期间多次对同一个对象调用hashcode方法时，只要没有修改在对象
+     *
      * <p>
      * As much as is reasonably practical, the hashCode method defined by
      * class {@code Object} does return distinct integers for distinct
