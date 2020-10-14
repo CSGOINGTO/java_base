@@ -685,18 +685,25 @@ public class Thread implements Runnable {
     /**
      * Causes this thread to begin execution; the Java Virtual Machine
      * calls the <code>run</code> method of this thread.
+     * 使该线程开始执行；JVM调用该线程的run方法。
+     *
      * <p>
      * The result is that two threads are running concurrently: the
      * current thread (which returns from the call to the
      * <code>start</code> method) and the other thread (which executes its
      * <code>run</code> method).
+     * 结果是两个线程并行执行：当前的线程（调用start方法返回的）和其他的线程（执行它的run方法）
+     *
      * <p>
      * It is never legal to start a thread more than once.
      * In particular, a thread may not be restarted once it has completed
      * execution.
+     * 不要开始一个线程超过一次。
+     * 特别是，一个线程完成执行之后无法重新启动。
      *
      * @exception  IllegalThreadStateException  if the thread was already
      *               started.
+     *               如果该线程已经启动，抛出IllegalThreadStateException
      * @see        #run()
      * @see        #stop()
      */
@@ -705,15 +712,20 @@ public class Thread implements Runnable {
          * This method is not invoked for the main method thread or "system"
          * group threads created/set up by the VM. Any new functionality added
          * to this method in the future may have to also be added to the VM.
+         * 由VM创建/设置的主方法线程或系统组线程，不会调用此方法。
+         * 将来任何新的功能添加到该方法可能也必须添加到VM中。
          *
          * A zero status value corresponds to state "NEW".
+         * 0状态值代表NEW状态
          */
         if (threadStatus != 0)
             throw new IllegalThreadStateException();
 
         /* Notify the group that this thread is about to be started
          * so that it can be added to the group's list of threads
-         * and the group's unstarted count can be decremented. */
+         * and the group's unstarted count can be decremented.
+         * 通知该组该线程即将启动，以便将其添加到组的线程列表中，并减少组的未启动计数。
+         * */
         group.add(this);
 
         boolean started = false;
@@ -739,8 +751,10 @@ public class Thread implements Runnable {
      * <code>Runnable</code> run object, then that
      * <code>Runnable</code> object's <code>run</code> method is called;
      * otherwise, this method does nothing and returns.
+     * 如果该线程是使用一个单独的Runnable run对象构造的，那么该Runnable的run方法将被调用，否则，该方法不执行任何操作并返回。
      * <p>
      * Subclasses of <code>Thread</code> should override this method.
+     * Thread的子类应该重写该方法。
      *
      * @see     #start()
      * @see     #stop()
@@ -756,6 +770,7 @@ public class Thread implements Runnable {
     /**
      * This method is called by the system to give a Thread
      * a chance to clean up before it actually exits.
+     * 该方法由系统调用，在线程实际退出之前给它一个清理的机会。
      */
     private void exit() {
         if (group != null) {
@@ -774,11 +789,16 @@ public class Thread implements Runnable {
 
     /**
      * Forces the thread to stop executing.
+     * 强制该线程停止执行。
+     *
      * <p>
      * If there is a security manager installed, its <code>checkAccess</code>
      * method is called with <code>this</code>
      * as its argument. This may result in a
      * <code>SecurityException</code> being raised (in the current thread).
+     * 如果安装了security manager，则调用checkAccess方法，并将其作为参数。
+     * 这可能会导致SecurityException被抛出（在当前线程中）。
+     *
      * <p>
      * If this thread is different from the current thread (that is, the current
      * thread is trying to stop a thread other than itself), the
@@ -787,13 +807,21 @@ public class Thread implements Runnable {
      * addition.
      * Again, this may result in throwing a
      * <code>SecurityException</code> (in the current thread).
+     * 如果该线程与当前线程不同（即当前线程视图停止自身以外的线程），则另外调用安全管理器的checkPermission方法（带有RuntimePermission("stopThread")参数）。
+     * 同样，这可能会导致抛出SecurityException（在当前线程中）
+     *
      * <p>
      * The thread represented by this thread is forced to stop whatever
      * it is doing abnormally and to throw a newly created
      * <code>ThreadDeath</code> object as an exception.
+     * 此线程所表示的线程将被迫使停止它正在执行的任何异常操作，并抛出一个新创建的ThreadDeath对象作为异常。
+     *
      * <p>
      * It is permitted to stop a thread that has not yet been started.
      * If the thread is eventually started, it immediately terminates.
+     * 允许停止尚未开始的线程。
+     * 如果该线程最终启动，则立即停止。
+     *
      * <p>
      * An application should not normally try to catch
      * <code>ThreadDeath</code> unless it must do some extraordinary
@@ -803,11 +831,15 @@ public class Thread implements Runnable {
      * officially dies).  If a <code>catch</code> clause catches a
      * <code>ThreadDeath</code> object, it is important to rethrow the
      * object so that the thread actually dies.
+     * 应用通常不应该尝试捕获ThreadDeath，除非它必须执行一些特殊的清理操作（注意，抛出ThreadDeath会导致在线程正式死亡之前执行try语句的finally子句）。
+     * 如果catch子句捕获了一个ThreadDeath对象，那么重新抛出该对象以使线程实际死亡是很重要的。
+     *
      * <p>
      * The top-level error handler that reacts to otherwise uncaught
      * exceptions does not print out a message or otherwise notify the
      * application if the uncaught exception is an instance of
      * <code>ThreadDeath</code>.
+     * 如果未捕获异常是ThreadDeath的实例，则对未捕获异常做出反应的顶级错误处理程序不会打印消息或通知应用程序。
      *
      * @exception  SecurityException  if the current thread cannot
      *               modify this thread.
@@ -834,6 +866,11 @@ public class Thread implements Runnable {
      *       target thread waits for long periods (on a condition variable,
      *       for example), the <code>interrupt</code> method should be used to
      *       interrupt the wait.
+     *       该方法本质上是不安全的。通过Thread.stop停止一个线程会导致它解锁它锁定的所有的监视器（这是未检查ThreadDeath异常向上传播堆栈的自然结果）。
+     *       如果以前受这些监视器保护的任何对象处于不一致的状态，其他线程就可以看到损坏的对象，这可能会导致任意的行为。
+     *       停止的许多用法应该由修改某个变量以指示目标线程应该停止运行的代码替代。
+     *       目标线程应该定期检查这个变量，如果变量表示要停止运行，则从它的run方法中有序地返回。如果目标线程等待很长时间（例如，在条件变量上），则应该使用interrupt方法来中断等待。
+     *
      *       For more information, see
      *       <a href="{@docRoot}/../technotes/guides/concurrency/threadPrimitiveDeprecation.html">Why
      *       are Thread.stop, Thread.suspend and Thread.resume Deprecated?</a>.
@@ -878,11 +915,13 @@ public class Thread implements Runnable {
 
     /**
      * Interrupts this thread.
+     * 中断该线程。
      *
      * <p> Unless the current thread is interrupting itself, which is
      * always permitted, the {@link #checkAccess() checkAccess} method
      * of this thread is invoked, which may cause a {@link
      * SecurityException} to be thrown.
+     * 除非当前线程中断自己（这总是允许的），否则将调用该线程的checkAccess方法，这可能导致抛出SecurityException异常。
      *
      * <p> If this thread is blocked in an invocation of the {@link
      * java.lang.Object#wait() wait()}, {@link java.lang.Object#wait(long) wait(long)}, or {@link
@@ -891,23 +930,30 @@ public class Thread implements Runnable {
      * #join(long, int)}, {@link #sleep(long)}, or {@link #sleep(long, int)},
      * methods of this class, then its interrupt status will be cleared and it
      * will receive an {@link InterruptedException}.
+     * 如果这个线程被Object类的wait(),wait(long),wait(long, int)方法或该类的join(),join(long),join(long, int),sleep(long),sleep(long, int)方法调用而处于阻塞的状态，
+     * 它的中断状态将被清除，并接收一个InterruptedException。
      *
      * <p> If this thread is blocked in an I/O operation upon an {@link
      * java.nio.channels.InterruptibleChannel InterruptibleChannel}
      * then the channel will be closed, the thread's interrupt
      * status will be set, and the thread will receive a {@link
      * java.nio.channels.ClosedByInterruptException}.
+     * 如果该线程在一个InterruptibleChannel上的I/O操作中被阻塞，那么这个通道将被关闭，
+     * 该线程的中断状态将被设置，并收到一个ClosedByInterruptException
      *
      * <p> If this thread is blocked in a {@link java.nio.channels.Selector}
      * then the thread's interrupt status will be set and it will return
      * immediately from the selection operation, possibly with a non-zero
      * value, just as if the selector's {@link
      * java.nio.channels.Selector#wakeup wakeup} method were invoked.
+     * 如果这个线程在通道中被阻塞，然后线程的中断状态将被设置，它将立即从选择状态返回，可能带有非零值，就像调用了选择器的wakeup方法一样。
      *
      * <p> If none of the previous conditions hold then this thread's interrupt
      * status will be set. </p>
+     * 如果前面的条件都不存在，那么这个线程的中断状态将设置。
      *
      * <p> Interrupting a thread that is not alive need not have any effect.
+     * 中断不活动的线程不需要有任何效果。
      *
      * @throws  SecurityException
      *          if the current thread cannot modify this thread
@@ -937,13 +983,17 @@ public class Thread implements Runnable {
      * second call would return false (unless the current thread were
      * interrupted again, after the first call had cleared its interrupted
      * status and before the second call had examined it).
+     * 测试当前线程是否已被中断。该方法清除线程的中断状态。
+     * 换句话说，如果这个方法连续调用两次，那么第二次调用则返回false（除非当前线程在第一次调用清除了它的中断状态之后，在第二次调用检查它之前再次被中断）
      *
      * <p>A thread interruption ignored because a thread was not alive
      * at the time of the interrupt will be reflected by this method
      * returning false.
+     * 如果一个线程中断被忽略，因为在中断时一个线程不是活动的，那么这个方法将返回false。
      *
      * @return  <code>true</code> if the current thread has been interrupted;
      *          <code>false</code> otherwise.
+     *          如果当前线程已经被中断了，则返回true，否则返回false。
      * @see #isInterrupted()
      * @revised 6.0
      */
@@ -954,13 +1004,16 @@ public class Thread implements Runnable {
     /**
      * Tests whether this thread has been interrupted.  The <i>interrupted
      * status</i> of the thread is unaffected by this method.
+     * 测试该线程是否被中断。线程的中断状态不受该方法的影响。
      *
      * <p>A thread interruption ignored because a thread was not alive
      * at the time of the interrupt will be reflected by this method
      * returning false.
+     * 如果一个线程中断被忽略，因为在中断时一个线程不是活动的，那么这个方法将返回false。
      *
      * @return  <code>true</code> if this thread has been interrupted;
      *          <code>false</code> otherwise.
+     *          如果该线程已经被中断，则返回true，否则返回false。
      * @see     #interrupted()
      * @revised 6.0
      */
@@ -972,6 +1025,8 @@ public class Thread implements Runnable {
      * Tests if some Thread has been interrupted.  The interrupted state
      * is reset or not based on the value of ClearInterrupted that is
      * passed.
+     * 测试某个线程是否被中断。根据传入的ClearInterrupted的值重置中断状态。
+     *
      */
     private native boolean isInterrupted(boolean ClearInterrupted);
 
@@ -987,7 +1042,13 @@ public class Thread implements Runnable {
      *     destroyed, no thread could ever access this resource again.
      *     If another thread ever attempted to lock this resource, deadlock
      *     would result. Such deadlocks typically manifest themselves as
-     *     "frozen" processes. For more information, see
+     *     "frozen" processes.
+     *     该方法最初设计用于在不进行任何清理的情况下销毁该线程。它持有的任何监视器都将保持锁定状态。然而，该方法从未实现。
+     *     如果要实现的话，就会像suspend那样容易死锁。如果目标线程在关键系统资源被破坏时持有保护该资源的锁，则任何线程都
+     *     不能再次访问该资源。
+     *     如果其他线程试图锁定此资源，则会导致死锁。这种死锁通常表现为“冻结”进程。
+     *
+     *     For more information, see
      *     <a href="{@docRoot}/../technotes/guides/concurrency/threadPrimitiveDeprecation.html">
      *     Why are Thread.stop, Thread.suspend and Thread.resume Deprecated?</a>.
      * @throws NoSuchMethodError always
@@ -1000,6 +1061,7 @@ public class Thread implements Runnable {
     /**
      * Tests if this thread is alive. A thread is alive if it has
      * been started and has not yet died.
+     * 测试一个线程是否存活。一个线程如果已经启动并且还没有死亡，那么它就是活的。
      *
      * @return  <code>true</code> if this thread is alive;
      *          <code>false</code> otherwise.
@@ -1008,13 +1070,18 @@ public class Thread implements Runnable {
 
     /**
      * Suspends this thread.
+     * 挂起该线程
+     *
      * <p>
      * First, the <code>checkAccess</code> method of this thread is called
      * with no arguments. This may result in throwing a
      * <code>SecurityException </code>(in the current thread).
+     * 首先，该线程的checkAccess无参方法将被调用。可能会抛出一个SecurityException异常（在当前线程中）。
+     *
      * <p>
      * If the thread is alive, it is suspended and makes no further
      * progress unless and until it is resumed.
+     * 如果该线程是存活的，那么将挂起并且在恢复之前不会有进一步的进展。
      *
      * @exception  SecurityException  if the current thread cannot modify
      *               this thread.
@@ -1026,6 +1093,11 @@ public class Thread implements Runnable {
      *   the thread that would resume the target thread attempts to lock this
      *   monitor prior to calling <code>resume</code>, deadlock results.  Such
      *   deadlocks typically manifest themselves as "frozen" processes.
+     * 该方法已经被弃用，因为它天然的就容易死锁。
+     * 如果目标线程在挂起时在保护关键系统资源的监视器上持有锁，那么在目标线程恢复之前，没有线程可以访问该资源。
+     * 如果将恢复目标线程的线程在调用恢复之前视图锁定此监视器，则会导致死锁。
+     * 这种死锁通常表现为“冻结”进程。
+     *
      *   For more information, see
      *   <a href="{@docRoot}/../technotes/guides/concurrency/threadPrimitiveDeprecation.html">Why
      *   are Thread.stop, Thread.suspend and Thread.resume Deprecated?</a>.
@@ -1038,13 +1110,18 @@ public class Thread implements Runnable {
 
     /**
      * Resumes a suspended thread.
+     * 恢复挂起的线程。
+     *
      * <p>
      * First, the <code>checkAccess</code> method of this thread is called
      * with no arguments. This may result in throwing a
      * <code>SecurityException</code> (in the current thread).
+     * 首先，该线程的checkAccess的无参方法将被调用。它会导致抛出SecurityException（在当前线程中）
+     *
      * <p>
      * If the thread is alive but suspended, it is resumed and is
      * permitted to make progress in its execution.
+     * 如果线程存活着但是被挂起了，恢复该线程并允许该程序继续执行。
      *
      * @exception  SecurityException  if the current thread cannot modify this
      *               thread.
@@ -1052,6 +1129,8 @@ public class Thread implements Runnable {
      * @see        #suspend()
      * @deprecated This method exists solely for use with {@link #suspend},
      *     which has been deprecated because it is deadlock-prone.
+     *     该方法仅于suspend方法一起使用，因为它容易导致死锁，因此已经被弃用。
+     *
      *     For more information, see
      *     <a href="{@docRoot}/../technotes/guides/concurrency/threadPrimitiveDeprecation.html">Why
      *     are Thread.stop, Thread.suspend and Thread.resume Deprecated?</a>.
@@ -1224,12 +1303,16 @@ public class Thread implements Runnable {
     /**
      * Waits at most {@code millis} milliseconds for this thread to
      * die. A timeout of {@code 0} means to wait forever.
+     * 等待线程死亡的时间最多为millis毫秒。设置为0意味着永远等待。
      *
      * <p> This implementation uses a loop of {@code this.wait} calls
      * conditioned on {@code this.isAlive}. As a thread terminates the
      * {@code this.notifyAll} method is invoked. It is recommended that
      * applications not use {@code wait}, {@code notify}, or
      * {@code notifyAll} on {@code Thread} instances.
+     * 这个实现使用了一个以isAlive为条件的wait循环调用。
+     * 当线程终止时，就会调用notifyAll方法。
+     * 建议应用程序不要在线程实例上使用wait，notify或notifyAll。
      *
      * @param  millis
      *         the time to wait in milliseconds
@@ -1379,6 +1462,7 @@ public class Thread implements Runnable {
     /**
      * Determines if the currently running thread has permission to
      * modify this thread.
+     * 确定当前运行的线程是否具有修改此线程的权限。
      * <p>
      * If there is a security manager, its <code>checkAccess</code> method
      * is called with this thread as its argument. This may result in
@@ -1420,6 +1504,9 @@ public class Thread implements Runnable {
      * ClassLoader context of the parent Thread. The context ClassLoader of the
      * primordial thread is typically set to the class loader used to load the
      * application.
+     * 返回该线程的上下文类加载器。上下文类加载器由线程的创建者提供，在加载类和资源时在该线程中运行的代码使用。
+     * 如果没有setContextClassLoader set，默认是父线程的上下文类加载器。
+     * 原始线程的上下文类加载器通常设置为用于加载应用程序的类加载器。
      *
      * <p>If a security manager is present, and the invoker's class loader is not
      * {@code null} and is not the same as or an ancestor of the context class
@@ -1483,17 +1570,22 @@ public class Thread implements Runnable {
     /**
      * Returns <tt>true</tt> if and only if the current thread holds the
      * monitor lock on the specified object.
+     * 当且仅当当前线程持有指定对象上的监视器锁时，返回true。
      *
      * <p>This method is designed to allow a program to assert that
      * the current thread already holds a specified lock:
      * <pre>
      *     assert Thread.holdsLock(obj);
      * </pre>
+     * 该方法允许程序断言当前线程已经持有指定的锁：
+     *      assert Thread.holdsLock(obj);
      *
      * @param  obj the object on which to test lock ownership
+     *             测试锁所有权的对象
      * @throws NullPointerException if obj is <tt>null</tt>
      * @return <tt>true</tt> if the current thread holds the monitor lock on
      *         the specified object.
+     *         如果当前线程持有指定对象上的监视器锁，则返回true
      * @since 1.4
      */
     public static native boolean holdsLock(java.lang.Object obj);
@@ -1511,6 +1603,7 @@ public class Thread implements Runnable {
      * method invocation in the sequence.  The last element of the array
      * represents the bottom of the stack, which is the least recent method
      * invocation in the sequence.
+     * 获取当前线程的运行栈信息。
      *
      * <p>If there is a security manager, and this thread is not
      * the current thread, then the security manager's
@@ -1746,6 +1839,7 @@ public class Thread implements Runnable {
     public enum State {
         /**
          * Thread state for a thread which has not yet started.
+         * 创建后,但是没有start(),调用了start()后,线程才算准备就绪,可以运行(RUNNABLE)
          */
         NEW,
 
@@ -1754,6 +1848,7 @@ public class Thread implements Runnable {
          * state is executing in the Java virtual machine but it may
          * be waiting for other resources from the operating system
          * such as processor.
+         * 正在运行或正在等待操作系统调度
          */
         RUNNABLE,
 
@@ -1763,6 +1858,8 @@ public class Thread implements Runnable {
          * to enter a synchronized block/method or
          * reenter a synchronized block/method after calling
          * {@link java.lang.Object#wait() Object.wait}.
+         * 线程正在等待监视器锁。
+         * 正在synchronized块/方法上等待获取锁,或者调用了Object.wait(),等待重新获得锁进入同步块
          */
         BLOCKED,
 
@@ -1784,6 +1881,9 @@ public class Thread implements Runnable {
          * <tt>Object.notify()</tt> or <tt>Object.notifyAll()</tt> on
          * that object. A thread that has called <tt>Thread.join()</tt>
          * is waiting for a specified thread to terminate.
+         * 调用Object.wait(),Thread.join()或LockSupport.park()会进入该状态,注意这里的调用均为没有设置超时,
+         * 线程正在等待其他线程进行特定操作,比如,调用了Object.wait()的线程在另一个线程调用Object.notify()/Object.notifyAll()
+         * 调用了Thread.join()的线程在等待指定线程停止,join()的内部实现方式也是Object.wait(),只不过其Object就是线程对象本身
          */
         WAITING,
 
@@ -1798,12 +1898,15 @@ public class Thread implements Runnable {
          *   <li>{@link LockSupport#parkNanos LockSupport.parkNanos}</li>
          *   <li>{@link LockSupport#parkUntil LockSupport.parkUntil}</li>
          * </ul>
+         * 调用Thread.sleep(),Object.wait(long),Thread.join(long),LockSupport.parkNanos(long),LockSupport.parkUntil(long)会进入该状态,
+         * 注意,这里的调用均设置了超时
          */
         TIMED_WAITING,
 
         /**
          * Thread state for a terminated thread.
          * The thread has completed execution.
+         * 线程执行完成,退出
          */
         TERMINATED;
     }
