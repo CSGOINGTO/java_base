@@ -1672,8 +1672,10 @@ public abstract class AbstractQueuedSynchronizer
      * @return true if is reacquiring
      */
     final boolean isOnSyncQueue(Node node) {
+        // node的waitStatus为CONDITION，或者node没有prev前置节点
         if (node.waitStatus == Node.CONDITION || node.prev == null)
             return false;
+        // node.waitStatus != Node.CONDITION && node.prev != null && node.next != null
         if (node.next != null) // If has successor, it must be on queue
             return true;
         /*
@@ -1762,10 +1764,13 @@ public abstract class AbstractQueuedSynchronizer
     final int fullyRelease(Node node) {
         boolean failed = true;
         try {
+            // 获取当前锁的状态
             int savedState = getState();
+            // 释放锁
             if (release(savedState)) {
                 failed = false;
                 return savedState;
+                // 如果没有释放成功，则抛出IllegalMonitorStateException
             } else {
                 throw new IllegalMonitorStateException();
             }
@@ -1872,9 +1877,13 @@ public abstract class AbstractQueuedSynchronizer
      */
     public class ConditionObject implements Condition, java.io.Serializable {
         private static final long serialVersionUID = 1173984872572414699L;
+
         /** First node of condition queue. */
+        // 队列中的第一个等待者
         private transient Node firstWaiter;
+
         /** Last node of condition queue. */
+        // 队列中最后一个等待者
         private transient Node lastWaiter;
 
         /**
@@ -1886,21 +1895,32 @@ public abstract class AbstractQueuedSynchronizer
 
         /**
          * Adds a new waiter to wait queue.
+         * 添加一个新的等待节点到等待队列
+         *
          * @return its new wait node
+         * 返回新的等待节点
          */
         private Node addConditionWaiter() {
+            // t当前等待队列中的最后一个等待节点
             Node t = lastWaiter;
             // If lastWaiter is cancelled, clean out.
+            // 如果节点不为null并且t的waitStatus的状态不为CONDITION时，将lastWaiter删除，并重新赋值给t
             if (t != null && t.waitStatus != Node.CONDITION) {
+                // 删除取消状态的节点
                 unlinkCancelledWaiters();
                 t = lastWaiter;
             }
+            // 声明一个新的状态为CONDITION的node节点
             Node node = new Node(Thread.currentThread(), Node.CONDITION);
+            // 将新节点node加入到当前等待队列
             if (t == null)
                 firstWaiter = node;
             else
+                // 将t的nextWaiter节点赋值为node
                 t.nextWaiter = node;
+            // 将lastWaiter节点赋值为node
             lastWaiter = node;
+            // 将新节点node返回
             return node;
         }
 
@@ -1948,21 +1968,33 @@ public abstract class AbstractQueuedSynchronizer
          * storms.
          */
         private void unlinkCancelledWaiters() {
+            // t为等待队列的第一个节点
             Node t = firstWaiter;
             Node trail = null;
+            // 从前往后遍历
             while (t != null) {
+                // next为t节点的nextWaiter节点
                 Node next = t.nextWaiter;
+                // 如果t节点的waitStatus状态不为CONTITION时，则删除t节点，并重新赋值firstWaiter节点
                 if (t.waitStatus != Node.CONDITION) {
+                    // 将t节点的nextWaiter节点置为null，helpGC
                     t.nextWaiter = null;
+                    // trail为null时，说明目前所遍历到的节点的状态都不为CONDITION，直接将firstWaiter节点赋值为t节点的下一个节点（nextWaiter）
                     if (trail == null)
                         firstWaiter = next;
                     else
+                        // trail不为null，即目前所遍历到的节点中存在为CONDITION状态的节点，将上一个为CONDITION节点的nextWaiter节点置为next节点
+                        // 删除前： trail（CONDITION状态） (nextWaiter -->) t（不是CONDITION状态） (nextWaiter -->) next
+                        // 删除后： trail（CONDITION状态）（nextWaiter -->） next
                         trail.nextWaiter = next;
+                    // 如果next为null，将trail节点赋值给lastWaiter节点（细节看上面删除后的图例）
                     if (next == null)
                         lastWaiter = trail;
                 }
+                // 如果t节点的waitStatus状态为CONTITION时，将t节点赋值给trail节点
                 else
                     trail = t;
+                // 将next节点赋值给t节点
                 t = next;
             }
         }
@@ -2032,7 +2064,9 @@ public abstract class AbstractQueuedSynchronizer
          */
 
         /** Mode meaning to reinterrupt on exit from wait */
+        // 从wait状态退出后将重新进入中断状态
         private static final int REINTERRUPT =  1;
+        // 从wait状态退出后抛出InterruptedException
         /** Mode meaning to throw InterruptedException on exit from wait */
         private static final int THROW_IE    = -1;
 
@@ -2073,9 +2107,12 @@ public abstract class AbstractQueuedSynchronizer
          * </ol>
          */
         public final void await() throws InterruptedException {
+            // 如果当前线程被其他线程中断，则抛出InterruptedException
             if (Thread.interrupted())
                 throw new InterruptedException();
+            // 将新节点node加入到等待队列中
             Node node = addConditionWaiter();
+            // 释放锁，并返回当前锁的状态
             int savedState = fullyRelease(node);
             int interruptMode = 0;
             while (!isOnSyncQueue(node)) {
@@ -2083,10 +2120,13 @@ public abstract class AbstractQueuedSynchronizer
                 if ((interruptMode = checkInterruptWhileWaiting(node)) != 0)
                     break;
             }
+            // 将当前线程阻塞（park）并检查当前线程的中断状态
             if (acquireQueued(node, savedState) && interruptMode != THROW_IE)
                 interruptMode = REINTERRUPT;
+            // 将node节点从等待队列中删除
             if (node.nextWaiter != null) // clean up if cancelled
                 unlinkCancelledWaiters();
+            // 根据中断模式，响应中断
             if (interruptMode != 0)
                 reportInterruptAfterWait(interruptMode);
         }
