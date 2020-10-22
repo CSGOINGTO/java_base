@@ -1707,7 +1707,9 @@ public abstract class AbstractQueuedSynchronizer
 
     /**
      * Transfers a node from a condition queue onto sync queue.
+     * 将一个节点从condition队列中转移到同步队列
      * Returns true if successful.
+     * 如果成功则返回true
      * @param node the node
      * @return true if successfully transferred (else the node was
      * cancelled before signal)
@@ -1725,8 +1727,10 @@ public abstract class AbstractQueuedSynchronizer
          * attempt to set waitStatus fails, wake up to resync (in which
          * case the waitStatus can be transiently and harmlessly wrong).
          */
+        // 将node加入到等待队列中
         Node p = enq(node);
         int ws = p.waitStatus;
+        // node的状态如果<=0，则将状态原子性置为SIGNAL
         if (ws > 0 || !compareAndSetWaitStatus(p, ws, Node.SIGNAL))
             java.util.concurrent.locks.LockSupport.unpark(node.thread);
         return true;
@@ -1932,8 +1936,10 @@ public abstract class AbstractQueuedSynchronizer
          */
         private void doSignal(Node first) {
             do {
+                // 从firstWaiter开始往后遍历
                 if ( (firstWaiter = first.nextWaiter) == null)
                     lastWaiter = null;
+                // 将遍历到的first的nextWaiter置为null
                 first.nextWaiter = null;
             } while (!transferForSignal(first) &&
                      (first = firstWaiter) != null);
@@ -2005,14 +2011,18 @@ public abstract class AbstractQueuedSynchronizer
          * Moves the longest-waiting thread, if one exists, from the
          * wait queue for this condition to the wait queue for the
          * owning lock.
+         * 如果存在一个等待最长的线程，则将其从condition的wait queue转移到独享锁的wait queue
          *
          * @throws IllegalMonitorStateException if {@link #isHeldExclusively}
          *         returns {@code false}
          */
         public final void signal() {
+            // 判断当前线程是否持有锁
             if (!isHeldExclusively())
                 throw new IllegalMonitorStateException();
+            // first当前等待队列中第一个等待节点
             Node first = firstWaiter;
+            // 如果first不为null执行doSignal操作
             if (first != null)
                 doSignal(first);
         }
