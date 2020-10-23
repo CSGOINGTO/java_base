@@ -706,12 +706,14 @@ public abstract class AbstractQueuedSynchronizer
                 if (ws == Node.SIGNAL) {
                     if (!compareAndSetWaitStatus(h, Node.SIGNAL, 0))
                         continue;            // loop to recheck cases
+                    // 唤醒head的后继节点
                     unparkSuccessor(h);
                 }
                 else if (ws == 0 &&
                          !compareAndSetWaitStatus(h, 0, Node.PROPAGATE))
                     continue;                // loop on failed CAS
             }
+            // 跳出循环的条件
             if (h == head)                   // loop if head changed
                 break;
         }
@@ -721,12 +723,15 @@ public abstract class AbstractQueuedSynchronizer
      * Sets head of queue, and checks if successor may be waiting
      * in shared mode, if so propagating if either propagate > 0 or
      * PROPAGATE status was set.
+     * 设置队列的head，并检查后继节点是否在shared模式下等待，如果设置了propagate>0或者PROPAGATE状态，则进行传播
      *
      * @param node the node
      * @param propagate the return value from a tryAcquireShared
      */
     private void setHeadAndPropagate(Node node, int propagate) {
+        // h为当前队列的head节点
         Node h = head; // Record old head for check below
+        // 将node节点设置为新的head节点
         setHead(node);
         /*
          * Try to signal next queued node if:
@@ -747,7 +752,9 @@ public abstract class AbstractQueuedSynchronizer
         if (propagate > 0 || h == null || h.waitStatus < 0 ||
             (h = head) == null || h.waitStatus < 0) {
             Node s = node.next;
+            // 当s节点不为null时或者为SHARED模式时，唤醒线程
             if (s == null || s.isShared())
+                // 唤醒线程
                 doReleaseShared();
         }
     }
@@ -1013,20 +1020,26 @@ public abstract class AbstractQueuedSynchronizer
      */
     private void doAcquireSharedInterruptibly(int arg)
         throws InterruptedException {
+        // 声明一个新的SHARED类型的节点，加入到等待队列的尾部
         final Node node = addWaiter(Node.SHARED);
         boolean failed = true;
         try {
             for (;;) {
+                // p为当前节点的前置节点prev
                 final Node p = node.predecessor();
                 if (p == head) {
+                    // state为0时返回1，否则返回-1
                     int r = tryAcquireShared(arg);
+                    // state的状态为0，可以调用unPark唤醒等待队列中的线程
                     if (r >= 0) {
+                        // 为等待队列设置新的head节点，并唤醒线程
                         setHeadAndPropagate(node, r);
                         p.next = null; // help GC
                         failed = false;
                         return;
                     }
                 }
+                // 首次循环会将节点的waitStatus的状态设置为SIGNAL，并调用park进入阻塞状态
                 if (shouldParkAfterFailedAcquire(p, node) &&
                     parkAndCheckInterrupt())
                     throw new InterruptedException();
@@ -1337,6 +1350,7 @@ public abstract class AbstractQueuedSynchronizer
             throws InterruptedException {
         if (Thread.interrupted())
             throw new InterruptedException();
+        // 当state为0是返回1，不为0返回-1
         if (tryAcquireShared(arg) < 0)
             doAcquireSharedInterruptibly(arg);
     }
@@ -1375,7 +1389,9 @@ public abstract class AbstractQueuedSynchronizer
      * @return the value returned from {@link #tryReleaseShared}
      */
     public final boolean releaseShared(int arg) {
+        // CAS设置state为0时返回true
         if (tryReleaseShared(arg)) {
+            // 只有当state被CAS操作设置为0时，才会unPark一个线程
             doReleaseShared();
             return true;
         }
