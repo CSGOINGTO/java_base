@@ -235,8 +235,10 @@ public class ReentrantReadWriteLock
         static final int EXCLUSIVE_MASK = (1 << SHARED_SHIFT) - 1;
 
         /** Returns the number of shared holds represented in count  */
+        // 获取读锁次数
         static int sharedCount(int c)    { return c >>> SHARED_SHIFT; }
         /** Returns the number of exclusive holds represented in count  */
+        // 获取写锁次数
         static int exclusiveCount(int c) { return c & EXCLUSIVE_MASK; }
 
         /**
@@ -361,6 +363,7 @@ public class ReentrantReadWriteLock
              */
             Thread current = Thread.currentThread();
             int c = getState();
+            // w当前写锁的次数
             int w = exclusiveCount(c);
             if (c != 0) {
                 // (Note: if c != 0 and w == 0 then shared count != 0)
@@ -431,11 +434,15 @@ public class ReentrantReadWriteLock
              *    apparently not eligible or CAS fails or count
              *    saturated, chain to version with full retry loop.
              */
+            // 获取当前线程
             Thread current = Thread.currentThread();
+            // 获取当前AQS的status
             int c = getState();
+            // exclusiveCount(c)获取status低16位的值，判断是否有写锁占用
             if (exclusiveCount(c) != 0 &&
                 getExclusiveOwnerThread() != current)
                 return -1;
+            // 获取写锁次数
             int r = sharedCount(c);
             if (!readerShouldBlock() &&
                 r < MAX_COUNT &&
@@ -446,11 +453,16 @@ public class ReentrantReadWriteLock
                 } else if (firstReader == current) {
                     firstReaderHoldCount++;
                 } else {
+                    // 获取最近一次记录的HoldCounter，此缓存是为了提高效率，不用每次都去ThreadLocal中获取
                     HoldCounter rh = cachedHoldCounter;
+                    // 判断当前线程是不是最近一次记录的HoldCounter
                     if (rh == null || rh.tid != getThreadId(current))
+                        // 如果不是，则去Sync中的ThreadLocal中获取，然后再放到缓存中
                         cachedHoldCounter = rh = readHolds.get();
+                    // 如果count计数为0，则初始化HoldCounter
                     else if (rh.count == 0)
                         readHolds.set(rh);
+                    // 当前线程的重入次数+1
                     rh.count++;
                 }
                 return 1;
