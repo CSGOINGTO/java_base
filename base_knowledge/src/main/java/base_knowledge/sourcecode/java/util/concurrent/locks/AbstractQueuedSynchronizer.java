@@ -987,14 +987,18 @@ public abstract class AbstractQueuedSynchronizer
      * @param arg the acquire argument
      */
     private void doAcquireShared(int arg) {
+        // 将当前读锁加入到AQS等待队列中
         final Node node = addWaiter(Node.SHARED);
         boolean failed = true;
         try {
             boolean interrupted = false;
             for (;;) {
+                // 获取到前一个节点
                 final Node p = node.predecessor();
+                // 如果前一个节点是头节点，则尝试获取锁
                 if (p == head) {
                     int r = tryAcquireShared(arg);
+                    // 设置头节点并唤醒后继节点
                     if (r >= 0) {
                         setHeadAndPropagate(node, r);
                         p.next = null; // help GC
@@ -1004,6 +1008,7 @@ public abstract class AbstractQueuedSynchronizer
                         return;
                     }
                 }
+                // 判断是否应该挂起，如果要挂起则挂起线程
                 if (shouldParkAfterFailedAcquire(p, node) &&
                     parkAndCheckInterrupt())
                     interrupted = true;
@@ -1510,9 +1515,16 @@ public abstract class AbstractQueuedSynchronizer
      * #tryAcquireShared}) then it is guaranteed that the current thread
      * is not the first queued thread.  Used only as a heuristic in
      * ReentrantReadWriteLock.
+     *
+     * 读锁可以插队，写锁则不能
+     * 如果排队第一位的是写锁，则可以插队
      */
     final boolean apparentlyFirstQueuedIsExclusive() {
         Node h, s;
+        // 判断head是否为null
+        // 判断head的下一个节点是否为null
+        // 判断head的下一个节点是否是共享模式
+        // 判断head的下一个节点中的线程是否为null
         return (h = head) != null &&
             (s = h.next)  != null &&
             !s.isShared()         &&
