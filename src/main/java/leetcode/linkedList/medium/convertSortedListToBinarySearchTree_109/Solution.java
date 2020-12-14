@@ -20,6 +20,9 @@ public class Solution {
         System.out.println(solution.sortedListToBST(head));
     }
 
+    /**
+     * 方法一：递归法
+     */
     public TreeNode sortedListToBST(ListNode head) {
         if (head == null) {
             return null;
