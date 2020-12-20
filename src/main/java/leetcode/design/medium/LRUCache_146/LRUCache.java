@@ -6,9 +6,9 @@ import java.util.Map;
 public class LRUCache {
     private Map<Integer, Node> getNodeMap;
 
-    private Node head = new Node(-1, -1);
+    private Node head = new Node();
 
-    private Node tail;
+    private Node tail = new Node();
 
     private int size;
 
@@ -20,55 +20,68 @@ public class LRUCache {
     }
 
     public int get(int key) {
-        // 将获取到的valNode放到链表的最后
-        if (getNodeMap.containsKey(key)) {
-            Node valNode = getNodeMap.get(key);
-            if (valNode != tail) {
-                Node nextNode = valNode.next;
-                valNode.prev.next = nextNode;
-                nextNode.prev = valNode.prev;
-                insertNode(tail, valNode);
-            }
+        // 存在key所对应的value
+        Node valNode = getNodeMap.get(key);
+        if (valNode != null) {
+            deleteNode(valNode);
+            // 将对应的node插入到tail前
+            insertTailPrev(valNode);
             return valNode.val;
         }
         return -1;
     }
 
     public void put(int key, int value) {
-        Node node = new Node(key, value);
-        if (capacity > size) {
-            // 初始化队列
-            if (tail == null) {
-                tail = node;
-                head.next = tail;
-                tail.prev = head;
-            } else {
-                insertNode(tail, node);
-            }
+        Node keyNode = getNodeMap.get(key);
+        // 如果key在链表中存在有对应的Node
+        if (keyNode != null) {
+            // 更新value值
+            keyNode.val = value;
+            // 将node从链表中删除
+            deleteNode(keyNode);
+            // 将node插入到尾结点之前
+            insertTailPrev(keyNode);
         } else {
-            Node removeNode = head.next;
-            getNodeMap.remove(removeNode.key);
-            // 判断removeNode是否为尾结点
-            if (removeNode != tail) {
-                head.next = removeNode.next;
-                removeNode.next.prev = head;
-                insertNode(tail, node);
+            Node newNode = new Node(key, value);
+            // 判断是否还有存储空间
+            // 有存储空间
+            if (size < capacity) {
+                // 初始化链表
+                if (head.next == null) {
+                    head.next = newNode;
+                    newNode.prev = head;
+                    newNode.next = tail;
+                    tail.prev = newNode;
+                } else {
+                    // 直接在tail前插入新节点
+                    insertTailPrev(newNode);
+                }
             } else {
-                head.next = node;
-                node.prev = head;
-                tail = node;
+                // 没有存储空间
+                // 删除head之后的节点
+                Node deleteNode = head.next;
+                getNodeMap.remove(deleteNode.key);
+                size--;
+                // 插入新节点
+                insertTailPrev(newNode);
+                // 删除deleteNode
+                deleteNode(deleteNode);
             }
-            size--;
+            size++;
+            getNodeMap.put(key, newNode);
         }
-        size++;
-        getNodeMap.put(key, node);
     }
 
-    private void insertNode(Node tail, Node node) {
-        tail.next = node;
-        node.prev = tail;
-        node.next = null;
-        this.tail = node;
+    private void insertTailPrev(Node node) {
+        tail.prev.next = node;
+        node.prev = tail.prev;
+        node.next = tail;
+        tail.prev = node;
+    }
+
+    private void deleteNode(Node node) {
+        node.prev.next = node.next;
+        node.next.prev = node.prev;
     }
 
     class Node {
@@ -81,6 +94,9 @@ public class LRUCache {
 
         private Node next;
 
+        public Node() {
+        }
+
         public Node(int key, int val) {
             this.key = key;
             this.val = val;
@@ -88,11 +104,30 @@ public class LRUCache {
     }
 
     public static void main(String[] args) {
-        LRUCache lruCache = new LRUCache(1);
-        lruCache.put(2, 1);
+        LRUCache lruCache = new LRUCache(2);
+        lruCache.put(1, 1);
+        lruCache.print();
+        lruCache.put(2, 2);
+        lruCache.print();
+        System.out.println(lruCache.get(1));
+        lruCache.print();
+        lruCache.put(3, 3);
+        lruCache.print();
         System.out.println(lruCache.get(2));
-        lruCache.put(3, 2);
-        System.out.println(lruCache.get(2));
+        lruCache.print();
+        lruCache.put(4, 4);
+        lruCache.print();
+        System.out.println(lruCache.get(1));
         System.out.println(lruCache.get(3));
+        System.out.println(lruCache.get(4));
+    }
+
+    private void print() {
+        Node temp = head;
+        while (temp != null) {
+            System.out.print(temp.val + " ");
+            temp = temp.next;
+        }
+        System.out.println();
     }
 }
