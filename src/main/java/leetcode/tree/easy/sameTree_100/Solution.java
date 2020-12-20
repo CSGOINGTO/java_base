@@ -52,4 +52,14 @@ public class Solution {
         }
         return p.val == q.val && isSameTree(p.left, q.left) && isSameTree(p.right, q.right);
     }
+
+    public boolean isSameTree2(TreeNode p, TreeNode q) {
+        if (p == q) {
+            return true;
+        }
+        if (p != null && q != null && p.val == q.val) {
+            return isSameTree2(p.left, q.left) && isSameTree2(p.right, q.right);
+        }
+        return false;
+    }
 }
