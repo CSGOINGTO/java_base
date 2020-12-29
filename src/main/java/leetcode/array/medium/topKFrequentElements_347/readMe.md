@@ -1,17 +1,9 @@
-package leetcode.array.medium.topKFrequentElements_347;
-
-import java.util.*;
-
-public class Solution {
-
-    public static void main(String[] args) {
-        Solution solution = new Solution();
-        System.out.println(Arrays.toString(solution.topKFrequent(new int[]{1, 2}, 2)));
-    }
-
-    /**
-     * 愚蠢而又直观的方法
-     */
+### 思路一
++ 将数组元素进行排序，然后取排在前k的元素
+### 代码一
+<details>
+<summary>愚蠢而又直观版</summary>
+<pre><code>
     public int[] topKFrequent(int[] nums, int k) {
         int[] returnNums = new int[k];
         Map<Integer, Integer> helpMap = new HashMap<>();
@@ -39,12 +31,24 @@ public class Solution {
             }
         }
         return returnNums;
-    }
+    } 
+</code></pre>
+</details>
 
-    /**
-     * 使用最小堆的方法
-     */
-    public int[] topKFrequent1(int[] nums, int k) {
+### 复杂度
++ 时间复杂度：O(k * n)
++ 空间复杂度：O(n) 
+
+------
+
+### 思路二
++ 堆排序，使用优先队列，将出现次数前k的元素存放到优先队列中
+### 代码二
+<details>
+<summary>堆排序，使用优先队列</summary>
+<pre>
+<code>
+    public int[] topKFrequent(int[] nums, int k) {
         int[] res = new int[k];
         Map<Integer, Integer> numsCountMap = new HashMap<>();
         for (int num : nums) {
@@ -65,11 +69,24 @@ public class Solution {
         }
         return res;
     }
+</code>
+</pre>
+</details>
 
-    /**
-     * 桶排序
-     */
-    public int[] topKFrequent2(int[] nums, int k) {
+### 复杂度
++ 时间复杂度：O(nlogk)
++ 空间复杂度：O(n)
+
+---
+
+### 思路三
++ 桶排序，将出现次数相同的元素放到一个列表中，并使用一个列表数组存放这些列表，列表数组的下标代表列表中元素出现的次数
+### 代码三
+<details>
+<summary>桶排序</summary>
+<pre>
+<code>
+    public int[] topKFrequent(int[] nums, int k) {
         int[] res = new int[k];
         Map<Integer, Integer> numsCountMap = new HashMap<>();
         for (int num : nums) {
@@ -93,4 +110,10 @@ public class Solution {
         }
         return res;
     }
-}
+</code>
+</pre>
+</details>
+
+### 复杂度
++ 时间复杂度：O(n)
++ 空间复杂度：O(n)
