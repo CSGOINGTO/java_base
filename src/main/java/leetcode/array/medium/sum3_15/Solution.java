@@ -1,8 +1,6 @@
 package leetcode.array.medium.sum3_15;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class Solution {
     public List<List<Integer>> threeSum(int[] nums) {
@@ -12,7 +10,7 @@ public class Solution {
         }
         Arrays.sort(nums);
         int len = 0;
-        while (len < nums.length - 2){
+        while (len < nums.length - 2) {
             int target = -nums[len];
             int left = len + 1;
             int right = nums.length - 1;
@@ -22,7 +20,7 @@ public class Solution {
                 int temp = leftValue + rightValue;
                 if (temp < target) {
                     left++;
-                    while(left < right && nums[left] == leftValue) {
+                    while (left < right && nums[left] == leftValue) {
                         left++;
                     }
                 } else if (temp > target) {
@@ -47,10 +45,31 @@ public class Solution {
                 }
             }
             len++;
-            while(len < nums.length && nums[len] == -target) {
+            while (len < nums.length && nums[len] == -target) {
                 len++;
             }
         }
         return res;
     }
+
+    public List<List<Integer>> threeSum1(int[] nums) {
+        Set<List<Integer>> resSet = new HashSet<>();
+        for (int i = 0; i < nums.length; i++) {
+            int target = -nums[i];
+            Map<Integer, Integer> helpMap = new HashMap<>();
+            for (int j = 0; j < nums.length && j != i; j++) {
+                if (helpMap.containsKey(target - nums[j])) {
+                    List<Integer> list = new ArrayList<>();
+                    list.add(nums[j]);
+                    list.add(nums[i]);
+                    list.add(target - nums[j]);
+                    Collections.sort(list);
+                    resSet.add(list);
+                }
+                helpMap.put(nums[j], nums[j]);
+            }
+        }
+        return new ArrayList<>(resSet);
+    }
+
 }
