@@ -1,34 +1,12 @@
-package leetcode.str.medium.longestSubstringWithoutRepeatingCharacters_3;
+### 思路
++ 使用Set存放子串，每当遍历到字符时，判断当前字符是否存在于Set中
++ 如果存在，则返回到上一个当前字符的下标
++ 如果不存在，则继续遍历
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-public class Solution {
-
+### 代码
+```java
+    // 使用set，通过遍历去找相同元素的下标
     public int lengthOfLongestSubstring(String s) {
-        if (s == null || s.length() == 0) return 0;
-        Set<Character> set = new HashSet<>();
-        char[] s_chars = s.toCharArray();
-        int max = 0;
-        Map<Character, Integer> lastSites = new HashMap<>();
-        for (int i = 0; i < s_chars.length; i++) {
-            if (set.contains(s_chars[i])) {
-                set.clear();
-                i = lastSites.get(s_chars[i]);
-                continue;
-            } else {
-                // 存放当前元素的位置
-                lastSites.put(s_chars[i], i);
-            }
-            set.add(s_chars[i]);
-            max = Math.max(max, set.size());
-        }
-        return max;
-    }
-
-    public int lengthOfLongestSubstring1(String s) {
         if (s == null || s.length() == 0) {
             return 0;
         }
@@ -55,8 +33,10 @@ public class Solution {
         }
         return Math.max(maxLen, len);
     }
-
-    public int lengthOfLongestSubstring2(String s) {
+```
+```java
+    // 使用map存放元素下标
+    public int lengthOfLongestSubstring(String s) {
         if (s == null || s.length() == 0) {
             return 0;
         }
@@ -78,4 +58,8 @@ public class Solution {
         }
         return Math.max(maxLen, len);
     }
-}
+```
+
+### 复杂度
++ 时间复杂度：O(n2)，使用Map存在元素下标可以将时间复杂度降为O(n)
++ 空间复杂度：O(n)
