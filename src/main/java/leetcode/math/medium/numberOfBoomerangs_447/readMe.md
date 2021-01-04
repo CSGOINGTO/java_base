@@ -1,14 +1,10 @@
-package leetcode.math.medium.numberOfBoomerangs_447;
+### 思路
+核心就是判断到同一个点的其他点的个数
++ 在每次遍历时，判断到达当前点距离相同的个数
++ 每次遍历完一个点之后，将所有的距离遍历一下，然后将距离个数*（距离个数-1），加到结果中
 
-import java.util.*;
-
-public class Solution {
-
-    public static void main(String[] args) {
-        Solution solution = new Solution();
-        System.out.println(solution.numberOfBoomerangs(new int[][]{{0, 0}, {1, 0}, {-1, 0}, {0, 1}, {0, -1}}));
-    }
-
+### 代码
+```java
     public int numberOfBoomerangs(int[][] points) {
         if (points.length <= 2) {
             return 0;
@@ -29,4 +25,8 @@ public class Solution {
         }
         return res;
     }
-}
+```
+
+### 复杂度
++ 时间复杂度：O(n2)
++ 空间复杂度：O(n)
