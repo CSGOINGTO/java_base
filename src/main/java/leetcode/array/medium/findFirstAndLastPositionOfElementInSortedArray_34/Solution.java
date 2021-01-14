@@ -6,7 +6,7 @@ public class Solution {
 
     public static void main(String[] args) {
         Solution solution = new Solution();
-        System.out.println(Arrays.toString(solution.searchRange(new int[]{2, 2}, 2)));
+        System.out.println(Arrays.toString(solution.searchRange1(new int[]{2, 2}, 2)));
     }
 
     /**
@@ -34,5 +34,41 @@ public class Solution {
         }
         if (nums[left] == target) return new int[]{left, left};
         return new int[]{-1, -1};
+    }
+
+    public int[] searchRange1(int[] nums, int target) {
+        if (nums == null || nums.length == 0) return new int[]{-1, -1};
+        int left = searchLeft(nums, target);
+        int right = searchRight(nums, target);
+        if (left > right || (left == right && nums[left] != target)) return new int[]{-1, -1};
+        return new int[]{left, right};
+    }
+
+    private int searchLeft(int[] nums, int target) {
+        int left = 0;
+        int right = nums.length - 1;
+        while (left < right) {
+            int mid = (left + right) >>> 1;
+            if (nums[mid] >= target) {
+                right = mid;
+            } else {
+                left = mid + 1;
+            }
+        }
+        return left;
+    }
+
+    private int searchRight(int[] nums, int target) {
+        int left = 0;
+        int right = nums.length - 1;
+        while (left < right) {
+            int mid = (left + right + 1) >>> 1;
+            if (nums[mid] <= target) {
+                left = mid;
+            } else {
+                right = mid - 1;
+            }
+        }
+        return left;
     }
 }
