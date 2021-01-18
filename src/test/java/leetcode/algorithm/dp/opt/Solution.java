@@ -1,7 +1,6 @@
-package leetcode.dp.opt;
+package leetcode.algorithm.dp.opt;
 
 public class Solution {
-
 
     public int rec_opt(int[] arr, int i) {
         if (i == 0) return 0;
