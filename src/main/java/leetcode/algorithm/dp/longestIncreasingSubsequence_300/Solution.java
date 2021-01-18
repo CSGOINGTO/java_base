@@ -1,4 +1,4 @@
-package leetcode.dp.longestIncreasingSubsequence_300;
+package leetcode.algorithm.dp.longestIncreasingSubsequence_300;
 
 public class Solution {
 
