@@ -1,4 +1,4 @@
-package leetcode.dp.maxValue;
+package leetcode.algorithm.dp.maxValue;
 
 public class Solution {
 
