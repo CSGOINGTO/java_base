@@ -1,4 +1,4 @@
-package leetcode.dp.threeStepsProblemlcci_0801;
+package leetcode.algorithm.dp.threeStepsProblemlcci_0801;
 
 public class Solution {
 
