@@ -1,4 +1,4 @@
-package leetcode.dp.maximumProductSubarray_152;
+package leetcode.algorithm.dp.maximumProductSubarray_152;
 
 public class Solution {
 
