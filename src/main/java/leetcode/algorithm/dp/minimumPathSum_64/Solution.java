@@ -1,4 +1,4 @@
-package leetcode.dp.minimumPathSum_64;
+package leetcode.algorithm.dp.minimumPathSum_64;
 
 public class Solution {
 
