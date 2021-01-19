@@ -4,7 +4,29 @@ public class Solution {
 
     public static void main(String[] args) {
         Solution solution = new Solution();
-        System.out.println(solution.maxSatisfied(new int[]{1}, new int[]{0}, 1));
+        System.out.println(solution.maxSatisfied1(new int[]{1, 0, 1, 2, 1, 1, 7, 5}, new int[]{0, 1, 0, 1, 0, 1, 0, 1}, 4));
+    }
+
+    public int maxSatisfied1(int[] customers, int[] grumpy, int X) {
+        int ans = 0;
+        for (int i = 0; i < customers.length; i++) {
+            if (grumpy[i] == 0) ans += customers[i];
+        }
+        int left = 0, right = 0;
+        while (right < X) {
+            if (grumpy[right] == 1) ans += customers[right];
+            right++;
+        }
+        right--;
+        int tmp_ans = ans;
+        while (right < customers.length - 1) {
+            if (grumpy[left] == 1) tmp_ans -= customers[left];
+            left++;
+            right++;
+            if (grumpy[right] == 1) tmp_ans += customers[right];
+            if (tmp_ans > ans) ans = tmp_ans;
+        }
+        return ans;
     }
 
     public int maxSatisfied(int[] customers, int[] grumpy, int X) {
