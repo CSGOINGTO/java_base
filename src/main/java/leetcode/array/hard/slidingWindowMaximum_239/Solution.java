@@ -24,6 +24,7 @@ public class Solution {
             right++;
         }
         ans_arr[arr_index++] = deque.peekFirst();
+        right--;
         while (right < len - 1) {
             if (deque.peekFirst() == nums[left]) {
                 deque.removeFirst();
