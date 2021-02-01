@@ -2,12 +2,14 @@ package leetcode.array.easy.addToArrayFormOfInteger_989;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Solution {
 
     public static void main(String[] args) {
         Solution solution = new Solution();
+        System.out.println(solution.addToArrayForm1(new int[]{1, 2, 3, 12, 12, 12, 1, 21, 2, 1, 21, 2, 1, 2, 1, 21, 2, 1, 2, 12, 1, 2, 1, 21, 2, 1, 2, 12, 12, 1, 2, 12, 1, 2, 12, 1, 2, 12, 1, 2, 1, 21, 2, 12, 12, 1234123342, 34, 2, 34, 23, 4234}, 112312313));
         System.out.println(solution.addToArrayForm2(new int[]{1, 2, 3, 12, 12, 12, 1, 21, 2, 1, 21, 2, 1, 2, 1, 21, 2, 1, 2, 12, 1, 2, 1, 21, 2, 1, 2, 12, 12, 1, 2, 12, 1, 2, 12, 1, 2, 12, 1, 2, 1, 21, 2, 12, 12, 1234123342, 34, 2, 34, 23, 4234}, 112312313));
     }
 
@@ -47,6 +49,25 @@ public class Solution {
             K /= 10;
         }
         Collections.reverse(ans);
+        return ans;
+    }
+
+    public List<Integer> addToArrayForm1(int[] A, int K) {
+        LinkedList<Integer> ans = new LinkedList<>();
+        for (int i = A.length - 1; i >= 0; i--) {
+            int tmp = A[i] + (K % 10);
+            K /= 10;
+            if (tmp >= 10) {
+                K++;
+                ans.addFirst(tmp % 10);
+            } else {
+                ans.addFirst(tmp);
+            }
+        }
+        while (K != 0) {
+            ans.addFirst(K % 10);
+            K /= 10;
+        }
         return ans;
     }
 }
