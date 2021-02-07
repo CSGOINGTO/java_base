@@ -1,9 +1,15 @@
 package leetcode.array.easy.shortestDistanceToACharacter_821;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Solution {
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        System.out.println(Arrays.toString(solution.shortestToChar1("loveleetcode", 'e')));
+    }
 
     public int[] shortestToChar(String S, char C) {
         List<Integer> c_index = new ArrayList<>();
@@ -41,4 +47,19 @@ public class Solution {
         }
         return res;
     }
+
+    public int[] shortestToChar1(String S, char C) {
+        int[] ans = new int[S.length()];
+        int pos = -S.length();
+        for (int i = 0; i < ans.length; i++) {
+            if (S.charAt(i) == C) pos = i;
+            ans[i] = i - pos;
+        }
+        for (int i = pos - 1; i >= 0; i--) {
+            if (S.charAt(i) == C) pos = i;
+            ans[i] = Math.min(ans[i], pos - i);
+        }
+        return ans;
+    }
+
 }
