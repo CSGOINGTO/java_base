@@ -1,0 +1,12 @@
+1. ApplicationContext和BeanFactory的区别
+
+2. BeanNameAware、BeanFactoryAware、BeanClassLoaderAware和ApplicationContextAware的作用
+
+3. EntityResolver的用法
+SAX应用程序在解析XML文件时，需要先读取该XML文件上的声明，根据声明去寻找对应的DTD定义，以便对文档进行验证。  
+默认寻找规则是通过网络来下载对应的DTD声明，并进行认证。  
+EntityResolver的作用是项目本身就可以提供一个如何寻找DTD声明的方法。比如将DTD文件方法项目的某处，在实现时直接将该文档读取并返回给SAX即可。这样就避免了通过网络来寻找相应的声明。  
+
+4. BeanDefinition：配置文件<bean>元素标签在spring容器内部的表现形式。<bean>元素标签拥有class、scope、lazy-init等属性，BeanDefinition则提供了相对应的beanClass、scope、lazyInit属性，BeanDefinition和<bean>中的属性是一一对应的。
++ AbstractBeanDefinition
++ RootBeanDefinition、GenericBeanDefinition和ChildBeanDefinition
