@@ -38,7 +38,7 @@
        2. **Transactional.PROPAGATION_NOT_SUPPORT**:以非事务方式运行，如果当前存在事务，则把当前事务挂起
        3. **Transactional.PROPAGATION_NEVER**:以非事务方式运行，如果当前存在事务，则抛出异常
 
-    2. 正确设置@Transactional的**rollbackFor**属性：默认情况下，如果在事务中抛出了**RuntimeException**或者**Error则Spring将回滚事务**；除此之外，Spring不会回滚事务。如果在事务中抛出其他类型的异常，并期望Spring能够回滚事务，可以**指定rollbackFor**。
+    2. 正确设置@Transactional的**rollbackFor**属性：默认情况下，如果在事务中抛出了**RuntimeException**或者**Error则Spring将回滚事务**；除此之外，Spring不会回滚事务。如果在事务中抛出其他类型的异常，并期望Spring能够回滚事务，可以**指定rollbackFor**。但是如果异常被try...catch处理了，则事务不会回滚。
 
     3. @Transactional只能应用到public方法才会生效： 这是因为在使用 Spring AOP 代理时，Spring 在调用在 TransactionInterceptor  在目标方法执行前后进行拦截之前，DynamicAdvisedInterceptor（CglibAopProxy 的内部类）的  intercept 方法或 JdkDynamicAopProxy 的 invoke 方法会间接调用  **AbstractFallbackTransactionAttributeSource**（Spring 通过这个类获取@Transactional 注解的事务属性配置属性信息）的 **computeTransactionAttribute** 方法。 
 
@@ -53,9 +53,9 @@
        ```
        
     4. 避免Spring的AOP的自调用问题：若同一个类中的其他**没有@Transactional注解的方法**``内部调用``了**有@Transactional注解的方法**，**有@Transactional注解的方法的事务被忽略，不会发生回滚**。这个是由于Spring AOP造成的。为了解决这个问题，可以使用AspectJ取代Spring AOP：
-    
+
        1. 将AspectJ信息添加到xml配置文件
-    
+
        ```xml
        
        <tx:annotation-driven mode="aspectj" />
@@ -70,5 +70,21 @@
        </bean>
        
        ```
-    
+
        2. 在pom文件中添加相关的依赖
+       
+    5. 事务传播行为
+
+       1. PROPAGATION_QEQUIRED：如果当前没有事务，则新建一个事务，如果存在一个事务，则加入到这个事务中
+          1. 外围方法开启事务的情况下`Propagation.REQUIRED`修饰的内部方法会加入到外围方法的事务中，所有`Propagation.REQUIRED`修饰的内部方法和外围方法均属于同一事务，只要一个方法回滚，整个事务均回滚。调用的方法内部只要出现了异常，不管有没有try...catch事务都会发生回滚
+          2. 外围方法未加事务，则被PROPAGATION_QEQUIRED修饰的方法会开启自己的事务，且开启的事务相互独立，互不干扰。
+       2. PROPAGATION_SUPPORTS：支持当前事务，如果当前没有事务，就以非事务方式执行
+       3. PROPAGATION_MANDATORY：使用当前的事务，如果当前没有事务，则抛出异常
+       4. PROPAGATION_REQUIRES_NEW：新建事务，如果当前存在事务，则把当前事务挂起
+          1. 外围方法未加事务，则被PROPAGATION_REQUIRES_NEW修饰的方法会开启自己的事务，且开启的事务相互独立，互不干扰
+          2. 在外围方法开启事务的情况下`Propagation.REQUIRES_NEW`修饰的内部方法依然会单独开启独立事务，且与外部方法事务也独立，内部方法之间、内部方法和外部方法事务均相互独立，互不干扰。
+       5. PROPAGATION_NOT_SUPPORTED：以非事务方式执行操作，如果当前存在事务，就把当前事务挂起
+       6. PROPAGATION_NEVER：以非事务方式执行，如果当前存在事务，则抛出异常
+       7. PROPAGATION_NESTED：如果当前存在事务，则在嵌套事务内执行。如果当前没有事务，则执行与PROPAGATION_REQUIRED类似的操作
+          1. 外围方法未开启事务的情况下`Propagation.NESTED`和`Propagation.REQUIRED`作用相同，修饰的内部方法都会新开启自己的事务，且开启的事务相互独立，互不干扰
+          2. 外围方法开启事务的情况下`Propagation.NESTED`修饰的内部方法属于外部事务的子事务，外围主事务回滚，子事务一定回滚，而内部子事务可以单独回滚而不影响外围主事务和其他子事务
