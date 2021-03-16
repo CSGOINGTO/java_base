@@ -442,7 +442,7 @@ public class ReentrantReadWriteLock
             if (exclusiveCount(c) != 0 &&
                 getExclusiveOwnerThread() != current)
                 return -1;
-            // 获取写锁次数
+            // 获取读锁次数
             int r = sharedCount(c);
             if (!readerShouldBlock() &&
                 r < MAX_COUNT &&

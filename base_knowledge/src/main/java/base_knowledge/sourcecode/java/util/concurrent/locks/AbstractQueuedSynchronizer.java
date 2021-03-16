@@ -363,7 +363,7 @@ public abstract class AbstractQueuedSynchronizer
         // 当前节点的后继者处于等待状态，当前节点的线程如果释放或取消了同步状态，通知后续节点
         static final int SIGNAL    = -1;
         /** waitStatus value to indicate thread is waiting on condition */
-        // 等待队列的等待状态，当调用signal()时，进入同步队列
+        // 等待队列的等待状态，当调用await()时，进入同步队列
         static final int CONDITION = -2;
         /**
          * waitStatus value to indicate the next acquireShared should
@@ -467,7 +467,7 @@ public abstract class AbstractQueuedSynchronizer
          * we save a field by using special value to indicate shared
          * mode.
          * Node即可以作为同步队列节点使用，也可以作为Condition的等待队列节点使用。
-         * 在作为同步队列节点时，nextWaiter可能有两个值：EXCLUSIVE,SHARED标识当前节点时独占模式还是共享模式；
+         * 在作为同步队列节点时，nextWaiter可能有两个值：EXCLUSIVE,SHARED标识当前节点是独占模式还是共享模式；
          * 在作为等待队列节点使用时，nextWaiter保存后继节点。
          *
          */
