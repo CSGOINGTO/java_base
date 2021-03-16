@@ -25,7 +25,16 @@ public class ReadWriteLockDemo {
 //            } catch (InterruptedException e) {
 //                e.printStackTrace();
 //            }
-            System.out.println(Thread.currentThread().getName() + " : " + map.get("hello"));
+
+            String hello = map.get("hello");
+            if (null == hello) {
+                readLock.unlock();
+                writeLock.lock();
+                map.put("hello", "锁降级");
+                writeLock.unlock();
+                readLock.lock();
+                System.out.println(Thread.currentThread().getName() + " : " + map.get("hello"));
+            }
             readLock.unlock();
 //            reentrantLock.unlock();
         }, "read-1").start();
@@ -48,10 +57,10 @@ public class ReadWriteLockDemo {
         new Thread(() -> {
             writeLock.lock();
 //            reentrantLock.lock();
-            for (int i = 0; i < 10000000; i++) {
-                map.put("hello", "" + i);
-                map.put("" + i, "" + i);
-            }
+//            for (int i = 0; i < 10000000; i++) {
+                map.put("hello", "write-1" );
+//                map.put("" + i, "" + i);
+//            }
             writeLock.unlock();
 //            readCondition_1.signal();
 //            reentrantLock.unlock();
@@ -60,10 +69,10 @@ public class ReadWriteLockDemo {
         new Thread(() -> {
             writeLock.lock();
 //            reentrantLock.lock();
-            for (int i = 0; i < 10000000; i++) {
-                map.put("hello1", "" + i);
-                map.put(" _" + i, " _" + i);
-            }
+//            for (int i = 0; i < 10000000; i++) {
+                map.put("hello1", "write-2");
+//                map.put(" _" + i, " _" + i);
+//            }
             writeLock.unlock();
 //            readCondition_1.signal();
 //            reentrantLock.unlock();
