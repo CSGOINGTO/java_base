@@ -1,6 +1,7 @@
 **AQS（AbstractQueuedSynchronizer）：** 抽象队列同步器
 
-内部维护了一个`volitile int state`表示共享资源（state状态的修改都是通过CAS），一个CLH FIFO线程等待队列（会初始化一个头结点）。
+> 内部维护了一个`volitile int state`表示共享资源（state状态的修改都是通过CAS），一个CLH FIFO线程等待队列（会初始化一个头结点）。
+>
 
 1. 数据结构：
    1. Node节点：
@@ -14,7 +15,7 @@
       3. Node next后置节点
       4. Node nextWaiter，作为等待队列使用时，存放的是后继节点；作为同步队列使用时，存放EXCLUSIVE,SHARED标识当前节点是独占模式还是共享模式
       5. Thread thread
-
+   
 2. 重点方法：
    1. **Node addWaiter(Node mode)：** 将线程封装成Node节点，加入到CLH队列的队尾，并将Node节点信息返回。如果CLH队列中存在节点，则直接将新节点加入到队尾，否则进入到enq(Node node)方法中
 
@@ -339,9 +340,9 @@
             ```
       
       5. **锁降级，WriteLock没有释放的时候，可以获取ReadLock。** 保证了数据的可见性。当前线程修改了数据之后，因为写锁还没有释放，因此其他线程都获取不到写锁，而当前线程也获取到了读锁，在写锁释放之后，就可以立即读取到最新写入的数据。
-   
+
          而锁的升级（ReadLock没有释放的时候，获取WriteLock）是不支持的。
-   
+
    7. **StampedLock：** JDK1.8加入的，对读写锁ReentReadWriteLock的增强，优化了读锁、写锁的访问，同时使读写锁之间可以互相转换，更细粒度控制开发。
 
 
