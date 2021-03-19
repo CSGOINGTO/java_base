@@ -669,7 +669,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
                     // 当p.next为null时，说明当前node节点为链表的最后一个节点，将新节点插入到该节点后面
                     if ((e = p.next) == null) {
                         p.next = newNode(hash, key, value, null);
-                        // binCount >= 7时，进入到链型结构转变为树形结构的流程
+                        // binCount >= 7时(当前链表的长度为9(加上新节点之后))，进入到链型结构转变为树形结构的流程
                         if (binCount >= TREEIFY_THRESHOLD - 1) // -1 for 1st
                             treeifyBin(tab, hash);
                         break;
@@ -737,7 +737,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
         else {               // zero initial threshold signifies using defaults
             // 扩容后的数组长度为默认的初始化长度（16）
             newCap = DEFAULT_INITIAL_CAPACITY;
-            // 扩容后的热size的阈值（0。75 * 16 = 12）
+            // 扩容后的新size的阈值（0.75 * 16 = 12）
             newThr = (int)(DEFAULT_LOAD_FACTOR * DEFAULT_INITIAL_CAPACITY);
         }
         // 扩容后的resize阈值2为0（初始化了容量和阈值，构造器Map(int initialCapacity, float loadFactor)）
