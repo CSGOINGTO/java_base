@@ -27,4 +27,75 @@ public class Solution {
         }
         return max;
     }
+
+    public int lengthOfLongestSubstring1(String s) {
+        if (s == null || s.length() == 0) {
+            return 0;
+        }
+        int len = 0;
+        int maxLen = Integer.MIN_VALUE;
+        char[] s_chars = s.toCharArray();
+        Set<Character> characterSet = new HashSet<>();
+        for (int i = 0; i < s_chars.length; i++) {
+            char c = s_chars[i];
+            if (characterSet.contains(c)) {
+                maxLen = Math.max(maxLen, len);
+                characterSet.clear();
+                for (int j = i - 1; j >= 0; j--) {
+                    if (s_chars[j] == c) {
+                        i = j;
+                        break;
+                    }
+                }
+                len = 0;
+                continue;
+            }
+            characterSet.add(c);
+            len++;
+        }
+        return Math.max(maxLen, len);
+    }
+
+    public int lengthOfLongestSubstring2(String s) {
+        if (s == null || s.length() == 0) {
+            return 0;
+        }
+        int len = 0;
+        int maxLen = Integer.MIN_VALUE;
+        char[] s_chars = s.toCharArray();
+        Map<Character, Integer> characterMap = new HashMap<>();
+        for (int i = 0; i < s_chars.length; i++) {
+            char c = s_chars[i];
+            if (characterMap.containsKey(c)) {
+                maxLen = Math.max(maxLen, len);
+                i = characterMap.get(c);
+                len = 0;
+                characterMap.clear();
+                continue;
+            }
+            characterMap.put(c, i);
+            len++;
+        }
+        return Math.max(maxLen, len);
+    }
+
+    public int lengthOfLongestSubstring3(String s) {
+        if (s.length() == 0) return 0;
+        HashMap<Character, Integer> map = new HashMap<Character, Integer>();
+        int max = 0;
+        int left = 0;
+        for (int i = 0; i < s.length(); i++) {
+            if (map.containsKey(s.charAt(i))) {
+                left = Math.max(left, map.get(s.charAt(i)) + 1);
+            }
+            map.put(s.charAt(i), i);
+            max = Math.max(max, i - left + 1);
+        }
+        return max;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        System.out.println(solution.lengthOfLongestSubstring3("dvdf"));
+    }
 }
