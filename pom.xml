@@ -13,6 +13,8 @@
         <module>base_knowledge</module>
         <module>spring_learn</module>
         <module>kafka_learn</module>
+        <module>my_springboot_starter</module>
+        <module>spring_boot_learn</module>
     </modules>
 
     <properties>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lx.spring_boot_learn.mapper.UserMapper">
+
+    <resultMap id="user" type="com.lx.spring_boot_learn.entity.User">
+        <id column="user_id" property="userId"/>
+        <result column="user_name" property="userName"/>
+        <result column="password" property="password"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <insert id="insertUser" parameterType="com.lx.spring_boot_learn.entity.User">
+        INSERT into user(user_id, user_name, password, create_time, modify_time)
+        values (#{userId}, #{userName}, #{password}, #{createTime}, #{modifyTime})
+    </insert>
+
+    <insert id="insertUserBatch">
+        INSERT into user(user_id, user_name, password, create_time, modify_time)
+        values
+        <foreach collection="userList" item="item" separator=",">
+            (#{item.userId}, #{item.userName}, #{item.password}, #{item.createTime}, #{item.modifyTime})
+        </foreach>
+    </insert>
+
+    <update id="updateUserByUserId">
+        update user
+        set modify_time = #{modifyTime}
+        where user_id = #{userId}
+    </update>
+
+    <select id="selectUserByUserId" resultMap="user">
+        SELECT user_id, user_name, password, create_time, modify_time
+        from user
+        where user_id = #{id}
+    </select>
+</mapper>

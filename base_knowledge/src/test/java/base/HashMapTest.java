@@ -1,18 +1,18 @@
 package base;
 
+import base_knowledge.sourcecode.java.util.HashMap;
+import base_knowledge.sourcecode.java.util.Map;
 import org.junit.Test;
 
 public class HashMapTest {
 
     @Test
     public void testHashMap() {
-        long start = System.currentTimeMillis();
-        int a = 10;
-        for (long i = 0; i < 10000000000L; i++) {
-            a += 1;
+        Map<String, String> hashMap = new HashMap<>();
+        for (int i = 0; i < 18000; i++) {
+            final String x = hashMap.put("" + i, "" + i);
+            if (x != null)
+                System.out.println(x);
         }
-        long end = System.currentTimeMillis();
-        System.out.println(a);
-        System.out.println(end - start);
     }
 }
