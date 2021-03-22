@@ -14,6 +14,15 @@
         INSERT into user(user_id, user_name, password, create_time, modify_time)
         values (#{userId}, #{userName}, #{password}, #{createTime}, #{modifyTime})
     </insert>
+
+    <insert id="insertUserBatch">
+        INSERT into user(user_id, user_name, password, create_time, modify_time)
+        values
+        <foreach collection="userList" item="item" separator=",">
+            (#{item.userId}, #{item.userName}, #{item.password}, #{item.createTime}, #{item.modifyTime})
+        </foreach>
+    </insert>
+
     <update id="updateUserByUserId">
         update user
         set modify_time = #{modifyTime}

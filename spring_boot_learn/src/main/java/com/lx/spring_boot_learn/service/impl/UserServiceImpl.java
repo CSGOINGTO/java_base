@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -59,6 +61,11 @@ public class UserServiceImpl implements UserService {
     public void insertUserExceptionRequiresNew(User user) {
         userMapper.insertUser(user);
         throw new RuntimeException();
+    }
+
+    @Override
+    public void insertUserBatch(List<User> userList) {
+        userMapper.insertUserBatch(userList);
     }
 
 
