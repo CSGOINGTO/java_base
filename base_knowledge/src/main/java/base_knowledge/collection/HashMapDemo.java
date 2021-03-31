@@ -7,6 +7,8 @@ public class HashMapDemo {
 
     public static void main(String[] args) {
         Map<MyObject, String> map = new HashMap<>();
+        map.put(null, "1");
+        map.put(new MyObject("sad"), null);
         for (int i = 0; i < 20; i++) {
             map.put(new MyObject(String.valueOf(i)), String.valueOf(i));
         }
