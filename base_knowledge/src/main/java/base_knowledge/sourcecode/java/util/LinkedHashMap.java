@@ -232,6 +232,7 @@ public class LinkedHashMap<K,V>
     Node<K,V> newNode(int hash, K key, V value, Node<K,V> e) {
         Entry<K,V> p =
             new Entry<K,V>(hash, key, value, e);
+        // 将新节点加入到双向链表中
         linkNodeLast(p);
         return p;
     }
