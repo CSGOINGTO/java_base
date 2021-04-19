@@ -6,10 +6,10 @@
 
    + **AspectJ**：AspectJ是AOP的Java实现方案。
      + AspectJ是一个代码生成工具，其中AspectJ语法就是用来定义代码生成规则的语法。基于自己的**语法编译工具**，编译的结果是Java Class文件
-     + AspectJ有自己的类加载器，支持在类加载时织入切面，即所谓的LTW机制
+     + AspectJ有自己的类加载器，支持在**类加载时**织入切面，即所谓的LTW机制
      + AspectJ同样也支持运行时织入，运行时织入是基于动态代理的机制（默认机制）
    + **Spring-AOP**：也是AOP的实现方案
-     + 支持在运行期基于动态代理的方式将aspect织入目标代码来实现AOP。
+     + 支持在**运行期**基于动态代理的方式将aspect织入目标代码来实现AOP。
      + 对切入点支持有限，对于static方法和final方法都无法支持AOP（因为此类方法无法生成代理类）
      + 只支持IOC容器管理的Bean，其他普通的Java类无法支持AOP
    + **联系和区别**：Spring-AOP中，我们同样可以使用类似AspectJ的注解来实现AOP的功能，但是，**使用AspectJ注解时，AOP的实现方式还是Spring AOP，并不依赖于AspectJ的编译器或者织入器。**
