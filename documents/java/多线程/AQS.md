@@ -68,7 +68,7 @@
                    }
                }
            }
-       }33
+       }
        ```
 
    3. **boolean acquireQueued(final Node node, int arg)：** 判断当前传入的node节点是否为head，如果是则尝试加锁，**加锁成功后，将当前节点设置为head节点，然后将之前的head节点置为null，方便GC（上一个节点把该节点唤醒之后，在此时才把上一个节点从CLH队列中移除）**。如果加锁失败，或者Node的前置节点不是head节点，通过`boolean shouldParkAfterFailedAcquire(Node pred, Node node)`方法将head节点的waitStatus修改为SIGNAL=-1，然后执行`boolean parkAndCheckInterrupt()`方法，调用LockSupport.park()挂起当前线程。
