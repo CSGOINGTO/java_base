@@ -73,8 +73,8 @@
 
            2. confirm实现的方式
 
-              1. 串行confirm模式：发送一条消息后，调用waitForConfirm()方法，等待broker端confirm，如果broker返回false或在超时时间内没有返回，则生产者进行消息重传
-              2. 批量confirm模式：生产者每发送一批消息后，调用waitForConfirm()方法，等待broker端confirm。**该方式有一个很大的缺陷，当一批消息中出现一个错误后，会导致这一批消息都没有确认，最终导致性能下降**
+              1. 串行confirm模式：发送一条消息后，调用`waitForConfirm()`方法，等待broker端confirm，如果broker返回false或在超时时间内没有返回，则生产者进行消息重传
+              2. 批量confirm模式：生产者每发送一批消息后，调用`waitForConfirm()`方法，等待broker端confirm。**该方式有一个很大的缺陷，当一批消息中出现一个错误后，会导致这一批消息都没有确认，最终导致性能下降**
               3. 异步confirm模式：**提供一个回调方法**，broker端confirm了一条或者多条消息后生产端会回调这个方法
 
            3. 异步confirm模式
@@ -140,4 +140,23 @@
 
     + RabbitMq Server中存储消息保证可靠
 
+      + 采用镜像模式，保证消息队列的高可用性
+    
     + RabbitMq Server发送消息到消费者保证消息可靠
+    
+      + 消费者设置消息手动ACK
+    
+        ```java
+        /**
+        * 第二个参数设置为false，表示不自动ack
+        **/
+        String basicConsume(String queue, boolean autoAck, DeliverCallback deliverCallback, CancelCallback cancelCallback) throws IOException;
+        ```
+    
+        ```java
+        /**
+        * deliveryTag中包含消息的唯一序号
+        * multiple为true时，确认当前及deliveryTag序号之前的所有的消息；为false时，只确认当前序号 * 的消息
+        **/
+        void basicAck(long deliveryTag, boolean multiple) throws IOException;
+        ```
