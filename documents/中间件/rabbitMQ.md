@@ -3,7 +3,7 @@
 2. 消息中间件：是一种软件或硬件基础设施，通过它可以在分布式系统中发送和接收消息。
 
 3. RPC:
-   1.   ![sql执行顺序](../image/rpc.jpg)
+   1.   ![rpc](../image/rpc.jpg)
 
 4. RabbitMQ和Erlang：
    1. Erlang是一种面向电信行业的函数式编程语言，被设计成一种分布式、高容错的软实时系统，用于构建99.999%可用性的应用系统。作为一种开发语言和运行时系统，Erlang专注于节点之间消息通信的轻量级进程，提供了状态无关的高并发性。
@@ -54,4 +54,90 @@
 
     使用场景为业务上需要消息顺序的进行处理，比如使用binlog进行数据库数据的迁移，在对一个数据进行增改删操作时，在迁移时也要保证操作顺序是增改删的。
 
-11. 分布式事务
+11. 避免消息丢失
+
+    ![rabbitMq](../image/rabbitMq/rabbitMq.png)
+
+    + 消息生产方生产消息到RabbitMq Server时保证消息可靠
+      + 保证消息准确被Exchange接收，并发送到相应的Queue
+
+        1. AMQP协议提供的事务机制：这种是同步操作，一条消息发送之后会使发送端阻塞，以等待RabbitMq Server的响应，之后才能继续发送下一条消息，生产者生产消息的吞吐量和性能会大大降低
+
+           1. channel.txSelect开启一个事务
+           2. channel.txCommit提交事务
+           3. channel.txRollback回滚事务
+
+        2. 发送方确认机制(publisher confirm)
+
+           1. 生产者调用`channel.confirmSelect`方法**将信道设置为confirm模式**，一旦信道进入confirm模式，**所有在该信道上面发布的消息都会被指派一个唯一的Id(从1开始)，一旦消息被投递到所有匹配的队列之后，RabbitMq就会发送一个确认(Basic.Ack)给生产者(包含消息的唯一deliveryTag和multiple参数，deliverTag中包含确认消息的序号，当multiple为true时，表示deliverTag序号之前的消息都得到了处理)**，这时生产者就知道消息已经正确到达Exchange了
+
+           2. confirm实现的方式
+
+              1. 串行confirm模式：发送一条消息后，调用waitForConfirm()方法，等待broker端confirm，如果broker返回false或在超时时间内没有返回，则生产者进行消息重传
+              2. 批量confirm模式：生产者每发送一批消息后，调用waitForConfirm()方法，等待broker端confirm。**该方式有一个很大的缺陷，当一批消息中出现一个错误后，会导致这一批消息都没有确认，最终导致性能下降**
+              3. 异步confirm模式：**提供一个回调方法**，broker端confirm了一条或者多条消息后生产端会回调这个方法
+
+           3. 异步confirm模式
+
+              1. 在channel上添加一个`ConfirmListener`，当消息被broker端接收后，就会调用相应的方法
+
+                 ```java
+                 public interface ConfirmListener {
+                     /**
+                     * RabbitMq消息接收成功的方法，成功后业务上可以做的事情
+                     * 生产者投递消息之前，需要先把消息存放起来，接收到ACK之后再删除
+                     **/
+                     void handleAck(long deliveryTag, boolean multiple)
+                         throws IOException;
+                 
+                     /**
+                     * RabbitMq消息接收失败的方法，用户可以在这里重新投递消息
+                     **/
+                     void handleNack(long deliveryTag, boolean multiple)
+                         throws IOException;
+                 }
+                 ```
+
+      + 当消息发送到Exchange后，没有对应的消费者，此时消息也将丢失
+
+        1. 将mandatory设置为true，channel上需要添加一个`ReturnListener`
+
+           ```java
+           /**
+           * 当mandatory设置为true时，如果exchange根据自身的类型和消息的routeKey无法找到一个符合条件的queue，那么会调用basic.return方法
+           * 将消息返回给生产者；如果设置为false时，出现上述情况时，broker会直接将消息丢弃。
+           * 
+           * 当immediate设置为true时，如果exchange无法找到符合条件的queue时，那么这条消息不会放到队列中；
+           * 如果设置为false时，出现上述情况，broker会通过basic.return将消息返给生产者。
+           *
+           **/
+           void basicPublish(String exchange, String routingKey, boolean mandatory, boolean immediate, BasicProperties props, byte[] body)
+                   throws IOException;
+           ```
+
+           ```java
+           /**
+           * 没有找到符合条件的queue的消息，会被ReturnListener监听，并执行该方法
+           **/
+           public interface ReturnListener {
+               void handleReturn(int replyCode,
+                       String replyText,
+                       String exchange,
+                       String routingKey,
+                       AMQP.BasicProperties properties,
+                       byte[] body)
+                   throws IOException;
+           }
+           ```
+
+        2. 利用备份交换机(alternate-exchange)，实现没有路由到队列的消息
+
+           ![alternate-exchange](../image/rabbitMq/alternate-exchange.png)
+
+           在web-ui中设置一个alternate-exchange，消息没有消费者时，会自动转移到alternate-exchange对应的queue，保证消息不会丢失。
+
+        3. **当alternate-exchange和mandatory一起使用时，mandatory参数无效**
+
+    + RabbitMq Server中存储消息保证可靠
+
+    + RabbitMq Server发送消息到消费者保证消息可靠
