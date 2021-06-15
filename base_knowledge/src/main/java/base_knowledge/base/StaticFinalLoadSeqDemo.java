@@ -2,6 +2,8 @@ package base_knowledge.base;
 
 public class StaticFinalLoadSeqDemo {
 
+    private static HelpClass staticHelpClass = new HelpClass("static - helpClass");
+
     static {
         System.out.println("static code 1");
     }
@@ -22,8 +24,6 @@ public class StaticFinalLoadSeqDemo {
     public StaticFinalLoadSeqDemo() {
         System.out.println("无参的构造函数执行");
     }
-
-    private static HelpClass staticHelpClass = new HelpClass("static - helpClass");
 
     private HelpClass helpClass = new HelpClass("helpClass");
 
@@ -46,9 +46,9 @@ public class StaticFinalLoadSeqDemo {
     public static void main(String[] args) {
         System.out.println("main方法开始！");
         // static方法执行，只会触发static修饰的变量和static代码块的执行
-        StaticFinalLoadSeqDemo.method();
+//        StaticFinalLoadSeqDemo.method();
         // 触发所有的初始化操作，并且构造器在所有初始化的最后执行
-        new StaticFinalLoadSeqDemo();
+//        new StaticFinalLoadSeqDemo();
         System.out.println("main方法执行结束！");
     }
 
