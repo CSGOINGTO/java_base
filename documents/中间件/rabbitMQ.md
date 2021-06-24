@@ -48,7 +48,7 @@
 
 9. 重复消费
 
-   当某个模块处理某个消息出现异常时，会让消息队列重新发送该消息，这样与消息队列连接的其他的模块也会重复的接收到消息，如果不进行处理，则会导致消息的重复消息。一般都会使用某个业务上的唯一的参数与消息进行绑定，在处理消息之前，先判断该消息是否已经处理过，只有在没有处理的情况下，才会对该消息进行处理。
+   当**某个模块处理某个消息出现异常**时，**会让消息队列重新发送该消息**，这样与消息队列连接的其他的模块也会重复的接收到消息，如果不进行处理，则会导致消息的重复消息。**一般都会使用某个业务上的唯一的参数与消息进行绑定，在处理消息之前，先判断该消息是否已经处理过，只有在没有处理的情况下，才会对该消息进行处理。**
 
 10. 顺序消费
 
@@ -58,29 +58,30 @@
 
     ![rabbitMq](../image/rabbitMq/rabbitMq.png)
 
-    + 消息生产方生产消息到RabbitMq Server时保证消息可靠
+    + **消息生产方生产消息到RabbitMq Server时保证消息可靠**
+      
       + 保证消息准确被Exchange接收，并发送到相应的Queue
-
+      
         1. AMQP协议提供的事务机制：这种是同步操作，一条消息发送之后会使发送端阻塞，以等待RabbitMq Server的响应，之后才能继续发送下一条消息，生产者生产消息的吞吐量和性能会大大降低
-
+      
            1. channel.txSelect开启一个事务
            2. channel.txCommit提交事务
            3. channel.txRollback回滚事务
-
+      
         2. 发送方确认机制(publisher confirm)
-
+      
            1. 生产者调用`channel.confirmSelect`方法**将信道设置为confirm模式**，一旦信道进入confirm模式，**所有在该信道上面发布的消息都会被指派一个唯一的Id(从1开始)，一旦消息被投递到所有匹配的队列之后，RabbitMq就会发送一个确认(Basic.Ack)给生产者(包含消息的唯一deliveryTag和multiple参数，deliverTag中包含确认消息的序号，当multiple为true时，表示deliverTag序号之前的消息都得到了处理)**，这时生产者就知道消息已经正确到达Exchange了
-
+      
            2. confirm实现的方式
-
+      
               1. 串行confirm模式：发送一条消息后，调用`waitForConfirm()`方法，等待broker端confirm，如果broker返回false或在超时时间内没有返回，则生产者进行消息重传
               2. 批量confirm模式：生产者每发送一批消息后，调用`waitForConfirm()`方法，等待broker端confirm。**该方式有一个很大的缺陷，当一批消息中出现一个错误后，会导致这一批消息都没有确认，最终导致性能下降**
               3. 异步confirm模式：**提供一个回调方法**，broker端confirm了一条或者多条消息后生产端会回调这个方法
-
+      
            3. 异步confirm模式
-
+      
               1. 在channel上添加一个`ConfirmListener`，当消息被broker端接收后，就会调用相应的方法
-
+      
                  ```java
                  public interface ConfirmListener {
                      /**
@@ -97,11 +98,11 @@
                          throws IOException;
                  }
                  ```
-
+      
       + 当消息发送到Exchange后，没有对应的消费者，此时消息也将丢失
-
+      
         1. 将mandatory设置为true，channel上需要添加一个`ReturnListener`
-
+      
            ```java
            /**
            * 当mandatory设置为true时，如果exchange根据自身的类型和消息的routeKey无法找到一个符合条件的queue，那么会调用basic.return方法
@@ -114,7 +115,7 @@
            void basicPublish(String exchange, String routingKey, boolean mandatory, boolean immediate, BasicProperties props, byte[] body)
                    throws IOException;
            ```
-
+      
            ```java
            /**
            * 没有找到符合条件的queue的消息，会被ReturnListener监听，并执行该方法
@@ -129,20 +130,20 @@
                    throws IOException;
            }
            ```
-
+      
         2. 利用备份交换机(alternate-exchange)，实现没有路由到队列的消息
-
+      
            ![alternate-exchange](../image/rabbitMq/alternate-exchange.png)
-
+      
            在web-ui中设置一个alternate-exchange，消息没有消费者时，会自动转移到alternate-exchange对应的queue，保证消息不会丢失。
-
+      
         3. **当alternate-exchange和mandatory一起使用时，mandatory参数无效**
-
-    + RabbitMq Server中存储消息保证可靠
-
+      
+    + **RabbitMq Server中存储消息保证可靠**
+    
       + 采用镜像模式，保证消息队列的高可用性
     
-    + RabbitMq Server发送消息到消费者保证消息可靠
+    + **RabbitMq Server发送消息到消费者保证消息可靠**
     
       + 消费者设置消息手动ACK
     
