@@ -1,20 +1,20 @@
 1. @EnableAutoConfiguration
 
 2. AutoConfigurationImportSelector与Spring的整合
-   1. spring boot使用了spring提供的BeanDefinitionRegistryPostProcessor扩展点，并实现了ConfigurationClassPostProcessor类，从而实现了spring之上的一系列逻辑扩展。
+   1. 框架.spring boot使用了spring提供的BeanDefinitionRegistryPostProcessor扩展点，并实现了ConfigurationClassPostProcessor类，从而实现了spring之上的一系列逻辑扩展。
    
 3. Spring Boot中的SPI机制
 
-   在META-INF/spring.factories文件中配置接口的实现类名称，然后再程序中读取这些配置文件并实例化。这种自定义的SPI机制是Spring Boot Starter实现的基础。
+   在META-INF/框架.spring.factories文件中配置接口的实现类名称，然后再程序中读取这些配置文件并实例化。这种自定义的SPI机制是Spring Boot Starter实现的基础。
 
    ```java
-   // spring-data-redis中META-INF/spring.factories中的内容
+   // 框架.spring-data-redis中META-INF/框架.spring.factories中的内容
    org.springframework.data.repository.core.support.RepositoryFactorySupport=org.springframework.data.redis.repository.support.RedisRepositoryFactory
    ```
 
    1. 实现原理
 
-      spring-core包中定义了`SpringFactoriesLoader`类，这个类实现了检索META-INF/spring.factories文件，并获取指定接口的配置的功能。
+      框架.spring-core包中定义了`SpringFactoriesLoader`类，这个类实现了检索META-INF/框架.spring.factories文件，并获取指定接口的配置的功能。
 
       ```java
       public final class SpringFactoriesLoader {
@@ -24,7 +24,7 @@
       	 * The location to look for factories.
       	 * <p>Can be present in multiple JAR files.
       	 */
-      	public static final String FACTORIES_RESOURCE_LOCATION = "META-INF/spring.factories";
+      	public static final String FACTORIES_RESOURCE_LOCATION = "META-INF/框架.spring.factories";
       
       
       	private static final Log logger = LogFactory.getLog(SpringFactoriesLoader.class);
@@ -38,8 +38,8 @@
       
       	/**
       	 * 根据接口类型获取其实现类的实例，返回的是接口实现类的列表
-      	 * 比如想要a.b.Interface类型的实例，则在当前模块所有jar包中的META- INF/spring.factories中扫描a.b.Interface类型的实现类对象
-      	 * 例如想要org.springframework.data.repository.core.support.RepositoryFactorySupport的实现类，spring-data-redis中META-INF/spring.factories中正好有定义，则该实现类就会被放到该接口的实现类列表中
+      	 * 比如想要a.b.Interface类型的实例，则在当前模块所有jar包中的META- INF/框架.spring.factories中扫描a.b.Interface类型的实现类对象
+      	 * 例如想要org.springframework.data.repository.core.support.RepositoryFactorySupport的实现类，框架.spring-data-redis中META-INF/框架.spring.factories中正好有定义，则该实现类就会被放到该接口的实现类列表中
       	 *
       	 * Load and instantiate the factory implementations of the given type from
       	 * {@value #FACTORIES_RESOURCE_LOCATION}, using the given class loader.
@@ -88,7 +88,7 @@
       
           
           /**
-          * 扫描META-INF/spring.factories中所有的定义。将扫描结果放到MultiValueMap<String, String> result = cache.get(classLoader);中
+          * 扫描META-INF/框架.spring.factories中所有的定义。将扫描结果放到MultiValueMap<String, String> result = cache.get(classLoader);中
           * key为接口名，value为实现类的类名
           *
           **/
@@ -163,4 +163,4 @@
 
 参考：
 
-1. spring.factories：https://www.cnblogs.com/itplay/p/9927892.html
+1. 框架.spring.factories：https://www.cnblogs.com/itplay/p/9927892.html
