@@ -72,12 +72,12 @@
 
    注意：
 
-   	1. finalize()方法只会被执行一次
-   	2. 因为有可能finalize()方法中存在死循环，或者极其耗时的操作，为了不影响整个内存回收系统的崩溃，所以Finalizer线程并不能保证finalize()方法能够执行完成
-   	3. finalize()中可以将自身(this)赋值给GC Root，保证此次对象不被回收。
-   	4. 非常不建议使用finalize()方法！使用try-finally或者其他方法都可以替代finalize()方法中所实现的功能！
+   1. finalize()方法只会被执行一次
+   2. 因为有可能finalize()方法中存在死循环，或者极其耗时的操作，为了不影响整个内存回收系统的崩溃，所以Finalizer线程并不能保证finalize()方法能够执行完成
+   3. finalize()中可以将自身(this)赋值给GC Root，保证此次对象不被回收。
+   4. 非常不建议使用finalize()方法！使用try-finally或者其他方法都可以替代finalize()方法中所实现的功能！
 
- 7. 方法区的回收
+ 7. 方法区的垃圾回收
 
      1. 回收的对象
          1. 废弃常量：没有任何对象引用方法区中的常量
@@ -125,18 +125,19 @@
 
      JDK6 Update24之后，HandlePromotionFailure参数失效，只要老年代的连续空间大小大于新生代对象总大小或者历次晋升的平均大小就会进行Minor GC，否则将进行Full GC。
 
-10. HotSpot算法的实现
+10. HotSpot垃圾回收的流程
 
-     ![HotSpot虚拟机垃圾回收的流程](../../image/java/HotSpot虚拟机垃圾回收的流程.png)
+      ![HotSpot虚拟机垃圾回收的流程](../../image/java/HotSpot虚拟机垃圾回收的流程.png)
 
-     1. 枚举根节点
-     2. 安全点
-     3. 安全区域
-     4. Stop The World
-     5. OopMap
-     6. 记忆集
-     7. 三色标记
-     8. 增量更新/原始快照
+     1. 涉及到的关键点
+         1. 枚举根节点
+         2. 安全点
+         3. 安全区域
+         4. Stop The World
+         5. OopMap
+         6. 记忆集
+         7. 三色标记
+         8. 增量更新/原始快照
 
 11. 垃圾收集器
 
@@ -177,8 +178,6 @@
 
       5. **Parallel Old收集器**
 
-         ![serial、serial-old收集器运行示意图](../../image/java/serial、serial-old收集器运行示意图.jpg)
-
          **老年代收集器，Parallel Scavenge收集器的老年代版本，多线程收集，使用标记-整理算法。**配合parallel Sacvenge收集器使用。
 
       6. **CMS(Concurrent Mark Sweep)收集器**
@@ -191,7 +190,7 @@
          2. 并发标记(CMS Concurrent Mark)：从GC Roots直接关联的对象开始遍历整个对象图的过程，整个过程很耗时，但是不需要停顿用户线程
          3. 重新标记(CMS Remark)：修正在并发标记期间，因用户线程导致标记产生变动的那一部分对象的标记记录，需要Stop The World，停顿时间通常会比初始标记稍长一些
          4. 并发清除(CMS Concurrent Sweep)：清理删除标记阶段被判断已经死亡的对象，由于不需要移动存活对象，所以这个阶段也是和用户线程同时并发的
-
+    
          特点：
 
          1. 默认启动的线程数为`(核心线程数 + 3) / 4`，如果处理器核心线程数小于4个的话，垃圾回收线程会占用系统很大一部分资源，导致应用程序变慢。虚拟机提供了一种***“增量式并发收集器”(Incremental Concurrent Mark Sweep，i-CMS)***，让垃圾回收线程和用户线程交替运行，这样虽然减少了垃圾回收线程独占资源的时间，但是会使垃圾回收的整个过程变长。i-CMS实际效果一般，JDK7时，被声明为过时的，JDK9时，被完全弃用。
@@ -200,7 +199,7 @@
          4. **因为用户线程和垃圾回收线程并发执行，因此垃圾回收的触发不能等到老年代几乎完全填满了才进行收集，必须在收集时要预留一部分内存空间供并发收集时的用户线程使用。**在JDK5默认情况下，老年代使用68%时就会被触发。JDK6时，提高到了92%。可以使用`-XX:CMSInitiatingOccu-pancyFraction`来设置这个触发值。如果触发值设置的过大，会导致并发失败出现的可能；如果设置的过小，会导致CMS执行GC过于频繁。
          5. 因为收集算法使用的是标记-清除，没有内存整理的过程，会导致内存中出现大量的内存空间碎片。空间碎片过多时，分配大对象时会很麻烦，如果分配时找不到足够大的连续空间，那么就会提前触发一次Full GC。`-XX:+UseCMS-CompactAtFullCollection`（默认开启，JDK9之后废弃），`-XX:CMSFullGCsBefore-Compaction`（JDK9废弃，`-XX:CMSFullGCsBefore-Compaction=0`时表示每次Full GC时都会采用MSC回收算法），这两个参数配合使用表示执行多少次FullGC后，采用**Mark Sweep Compact，MSC回收算法**，进行压缩整理堆。
          6. CMS会有一个后台线程**默认2s扫描一次**，判断是否达到垃圾回收的条件，`-XX:CMSWaitDuration`可以设置扫描的间隔。
-
+    
          
 
 
