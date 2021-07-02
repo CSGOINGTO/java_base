@@ -8,7 +8,7 @@ public class Main {
         concreteComponent = new DecoratorA(concreteComponent);
         concreteComponent.methodA();
         concreteComponent.methodB();
-
+        System.out.println("--------------------------------------");
         // 3. 此时被装饰类被DecoratorA和DecoratorB修饰
         concreteComponent = new DecoratorB(concreteComponent);
         concreteComponent.methodA();
