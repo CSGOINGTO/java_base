@@ -23,11 +23,63 @@
 4. 代理类的生成方式：JDK动态代理、CGLIB代理和expose-proxy
 
    + **JDK动态代理：** 其代理对象必须是某个接口的实现，它是通过运行期间创建一个接口的实现类来完成对目标对象的代理。**使用JDK动态代理的方式：**
+     
      + 自定义实现InvocationHandler接口的类
+     
      + 声明要代理的对象接口，并在构造函数中将其设置
-     + `invoke`方法，实现代理的逻辑
-     + `getProxy`方法，获取代理之后的对象
 
+     + `invoke`方法，实现代理的逻辑
+     
+     + `getProxy`方法，获取代理之后的对象
+     
+       ```java
+       public class MyInvocationHandler implements InvocationHandler {
+       
+           // 被代理的对象
+           private final Object object;
+       
+           // 构造器初始化被代理的对象
+           public MyInvocationHandler(Object object) {
+               this.object = object;
+           }
+       
+           @Override
+           public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+               System.out.println("My invocationHandler invoke begin...");
+               System.out.println("proxy: " + proxy.getClass().getName());
+               System.out.println("method: " + method.getName());
+               // 打印调用方法的参数
+               if (args != null) {
+                   for (Object o : args) {
+                       System.out.println("arg: " + o);
+                   }
+               }
+               if (method.getName().equals("toString")) {
+                   return proxy.getClass().toString();
+               } else if (method.getName().equals("hashCode")) {
+                   return proxy.getClass().hashCode();
+               } else {
+                   method.invoke(object, args);
+               }
+               System.out.println("My invocationHandler invoke end...");
+               return proxy.getClass();
+           }
+       }
+       ```
+     
+       ```java
+       public class Main {
+           public static void main(String[] args) {
+               Student student = new Student();
+               ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+               Person person = Proxy.newProxyInstance(classLoader, 
+                                      Student.class.getInterfaces(), 
+                                      new MyInvocationHandler(student));
+               person.say("我是动态代理!");
+           }
+       }
+       ```
+     
    + **CGLIB代理：** 实现原理类似于JDK动态代理，只是它在运行期间生成的代理对象是针对目标类扩展的子类。CGLIB是高效的代码生成包，底层是依靠ASM（一个小而快的字节码处理框架）操作字节码生成新的类，性能比JDK强。
 
    + **expose-proxy：** 有时候目标对象内部的自我调节将无法实施切面中的增强，比如this.内部方法，内部方法也要增强，就可以使用这样方式解决。
