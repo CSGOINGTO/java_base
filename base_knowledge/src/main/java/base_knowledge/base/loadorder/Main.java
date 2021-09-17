@@ -1,4 +1,4 @@
-package base_knowledge.loadorder;
+package base_knowledge.base.loadorder;
 
 public class Main {
     public static void main(String[] args) {
