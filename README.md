@@ -17,9 +17,9 @@
 
 ------
 
-仓库内容链接
+> **仓库内容链接**
 
-#### documents模块
+#### 1. documents模块
 
 1. [java文件夹](documents/java)
 
@@ -68,7 +68,9 @@
 
    可以快速加深我们对技术底层的理解和对某些技术快速入门的网站
 
-#### base_knowledge模块
+------
+
+#### 2. base_knowledge模块
 
 重点模块，该模块使用Maven进行管理，并使用了Lombok插件。
 
@@ -120,30 +122,30 @@
 
 ------
 
-#### spring_learn模块
+#### 3. spring_learn模块
 
 主要是为了方便debug spring源码
 
 ------
 
-#### spring_boot_learn模块
+#### 4. spring_boot_learn模块
 
 spring-boot中常用的一些注解的使用
 
 ------
 
-#### my_springboot_starter模块
+#### 5. my_springboot_starter模块
 
 自定义的springboot-starter模块
 
 ------
 
-#### kafka_learn模块
+#### 6. kafka_learn模块
 
 springboot与kafka基本的使用
 
 ------
 
-#### rabbit_learn模块
+#### 7. rabbit_learn模块
 
 RabbitMQ官网中所介绍的几种使用方式的代码实现
