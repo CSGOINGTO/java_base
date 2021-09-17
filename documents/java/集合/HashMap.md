@@ -61,7 +61,27 @@
       }
       ```
 
-9. **其他注意点：**
+9. **fail-fast机制**
+
+      ```java
+      // 该HashMap结构修改的次数
+      transient int modCount;
+      ```
+
+      HashMap结构的修改包括改变映射的数量（put操作、remove操作、clear操作等），或者改变了内部的结构（如：rehash时(重新散列)），都会使`modCount`的值+1。
+
+      在遍历map时，如果操作前后的`modCount`不相同的话，会报`ConcurrentModificationException`。
+
+      ```java
+      int mc = modCount;
+      ...
+      
+      if (modCount != mc)
+          throw new ConcurrentModificationException();
+      ```
+
+10. **其他注意点：**
+
    1. 只要保证length的长度是2^n 的话，就可以实现取模运算了。
    2. HashMap实际容量是大于等于初始化的容量中为2次幂的第一个值
    3. HashMap默认的初始化大小为16，之后每次扩充为原来的2倍

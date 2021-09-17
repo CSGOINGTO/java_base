@@ -1,3 +1,0 @@
-1. @EnableAutoConfiguration
-2. AutoConfigurationImportSelector与Spring的整合
-   1. spring boot使用了spring提供的BeanDefinitionRegistryPostProcessor扩展点，并实现了ConfigurationClassPostProcessor类，从而实现了spring之上的一系列逻辑扩展。
