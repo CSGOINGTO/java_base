@@ -24,7 +24,7 @@
         <netty-all.version>4.1.32.Final</netty-all.version>
         <dubbo.version>2.6.6</dubbo.version>
         <amqp-client.version>5.7.2</amqp-client.version>
-        <spring.version>5.2.6.RELEASE</spring.version>
+        <spring.version>5.3.19</spring.version>
         <aspect.version>1.9.5</aspect.version>
     </properties>
 
