@@ -81,4 +81,5 @@
 参考：
 
 1. 敖丙工作以来总结的大厂SQL调优姿势：https://mp.weixin.qq.com/s/nEmN4S9JOTVGj5IHyfNtCw
+2. MySQL大表优化方案：https://segmentfault.com/a/1190000006158186
 
